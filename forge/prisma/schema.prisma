@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Habit {
+  id           String   @id @default(cuid())
+  name         String
+  emoji        String
+  color        String   @default("#3fd68f")
+  category     String   @default("personal")
+  weeklyGoal   Int      @default(7)
+  order        Int      @default(0)
+  streakShield Boolean  @default(false)
+  reminderTime String?
+  createdAt    DateTime @default(now())
+  checks       Check[]
+  notes        Note[]
+}
+
+model Check {
+  id      String @id @default(cuid())
+  habitId String
+  date    String // YYYY-MM-DD
+  habit   Habit  @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
+
+model Note {
+  id      String @id @default(cuid())
+  habitId String
+  date    String // YYYY-MM-DD
+  content String
+  habit   Habit  @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
+
+model Achievement {
+  id         String    @id @default(cuid())
+  key        String    @unique
+  unlockedAt DateTime?
+}
+
+model Settings {
+  id    String @id @default("singleton")
+  theme String @default("dark")
+  xp    Int    @default(0)
+}
