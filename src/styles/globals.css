@@ -47,12 +47,12 @@
   --bg-base: #f8fafc;
   --bg-card: #ffffff;
   --bg-elevated: #f1f5f9;
-  --bg-input: #f8fafc;
+  --bg-input: #ffffff;
   --border: #e2e8f0;
-  --border-subtle: #edf2f7;
+  --border-subtle: #f1f5f9;
   --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
   --shadow-card: 0 4px 16px -1px rgba(0, 0, 0, 0.05), 0 0 0 1px var(--border);
   --shadow-elevated: 0 10px 30px -3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--border);
 }
@@ -213,11 +213,11 @@ h1, h2, h3, h4, h5 {
   z-index: 10;
 }
 
-.heatmap-0 { background: var(--bg-elevated); }
-.heatmap-1 { background: rgba(63, 214, 143, 0.2); }
-.heatmap-2 { background: rgba(63, 214, 143, 0.45); }
-.heatmap-3 { background: rgba(63, 214, 143, 0.7); }
-.heatmap-4 { background: #3fd68f; }
+.heatmap-0 { background: var(--bg-elevated); border: 1px solid var(--border); }
+.heatmap-1 { background: rgba(16, 185, 129, 0.25); }
+.heatmap-2 { background: rgba(16, 185, 129, 0.5); }
+.heatmap-3 { background: rgba(16, 185, 129, 0.75); }
+.heatmap-4 { background: #10b981; }
 
 /* ========================================
    TOAST OVERRIDES
@@ -251,6 +251,16 @@ h1, h2, h3, h4, h5 {
 @keyframes confetti-pop {
   0% { transform: translateY(0) scale(1); opacity: 1; }
   100% { transform: translateY(-100px) scale(0); opacity: 0; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
 }
 
 /* ========================================
