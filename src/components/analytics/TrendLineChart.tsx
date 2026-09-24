@@ -4,7 +4,29 @@ import { useAppStore } from '@/store/useAppStore'
 import { format, subDays, eachDayOfInterval } from 'date-fns'
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from 'recharts'
 
-const TODAY = format(new Date(), 'yyyy-MM-dd')
+interface TooltipProps {
+  active?: boolean
+  payload?: Array<{ value: number }>
+  label?: string
+}
+
+function CustomTooltip({ active, payload, label }: TooltipProps) {
+  if (!active || !payload?.length) return null
+  return (
+    <div
+      className="px-3 py-2 rounded-lg text-xs"
+      style={{
+        background: 'var(--bg-elevated)',
+        border: '1px solid var(--border)',
+        fontFamily: 'var(--font-mono)',
+        color: 'var(--text-primary)',
+      }}
+    >
+      <div className="font-bold mb-1">{label}</div>
+      <div style={{ color: '#3fd68f' }}>{payload[0]?.value ?? 0}% complete</div>
+    </div>
+  )
+}
 
 export function TrendLineChart() {
   const { habits, checks } = useAppStore()
@@ -23,24 +45,6 @@ export function TrendLineChart() {
       total,
     }
   })
-
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload?.length) return null
-    return (
-      <div
-        className="px-3 py-2 rounded-lg text-xs"
-        style={{
-          background: 'var(--bg-elevated)',
-          border: '1px solid var(--border)',
-          fontFamily: 'var(--font-mono)',
-          color: 'var(--text-primary)',
-        }}
-      >
-        <div className="font-bold mb-1">{label}</div>
-        <div style={{ color: '#3fd68f' }}>{payload[0]?.value ?? 0}% complete</div>
-      </div>
-    )
-  }
 
   return (
     <div>
