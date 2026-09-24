@@ -8,6 +8,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { ThemeToggle } from './ThemeToggle'
 import { KeyboardShortcutsModal } from './KeyboardShortcutsModal'
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
+import { Logo } from '@/components/ui/Logo'
 import { sound } from '@/lib/sound'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
@@ -76,23 +77,8 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-transform group-hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #38bdf8 100%)',
-                boxShadow: '0 0 18px rgba(16,185,129,0.4)',
-                color: '#ffffff',
-              }}
-            >
-              H
-            </div>
-            <span
-              className="text-xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}
-            >
-              Habit Tracker
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Logo size={36} withText />
           </Link>
 
           {/* Desktop Nav Links */}

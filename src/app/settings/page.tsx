@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { Download, Trash2, Bell, Moon, Sun, Shield } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { useAppStore } from '@/store/useAppStore'
 import { format } from 'date-fns'
 
@@ -221,16 +222,7 @@ export default function SettingsPage() {
           className="flex items-center gap-4 p-5 rounded-2xl"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
         >
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold"
-            style={{
-              background: 'linear-gradient(135deg, #10b981 0%, #38bdf8 100%)',
-              boxShadow: '0 0 16px rgba(16,185,129,0.35)',
-              color: '#ffffff',
-            }}
-          >
-            H
-          </div>
+          <Logo size={48} showBadge />
           <div>
             <div className="font-bold text-lg" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               Habit Tracker

@@ -8,6 +8,13 @@ export const metadata: Metadata = {
   title: 'Habit Tracker — Build Better Habits',
   description: 'A premium, animated habit tracker. Build your best self — one day at a time.',
   keywords: ['habit tracker', 'productivity', 'streak', 'daily habits'],
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     title: 'Habit Tracker — Build Better Habits',
     description: 'A premium, animated habit tracker.',
