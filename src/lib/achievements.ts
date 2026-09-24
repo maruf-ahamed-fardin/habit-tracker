@@ -34,7 +34,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: '14-day streak on any habit',
     icon: '🗡️',
     xpReward: 200,
-    color: '#3fd68f',
+    color: '#10b981',
     tier: 'silver',
   },
   {
@@ -62,7 +62,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: 'Complete your first habit check-in',
     icon: '✨',
     xpReward: 25,
-    color: '#3fd68f',
+    color: '#10b981',
     tier: 'bronze',
   },
   {
@@ -71,7 +71,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: '50 total check-ins across all habits',
     icon: '📈',
     xpReward: 150,
-    color: '#3fd68f',
+    color: '#10b981',
     tier: 'silver',
   },
   {
@@ -80,7 +80,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     description: '100 total check-ins',
     icon: '🎯',
     xpReward: 300,
-    color: '#3fd68f',
+    color: '#10b981',
     tier: 'gold',
   },
   {

@@ -23,7 +23,7 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
       }}
     >
       <div className="font-bold mb-1">{label}</div>
-      <div style={{ color: '#3fd68f' }}>{payload[0]?.value ?? 0}% complete</div>
+      <div style={{ color: '#10b981' }}>{payload[0]?.value ?? 0}% complete</div>
     </div>
   )
 }
@@ -59,8 +59,8 @@ export function TrendLineChart() {
           <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3fd68f" stopOpacity={0.4} />
-                <stop offset="100%" stopColor="#3fd68f" stopOpacity={0} />
+                <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -87,11 +87,11 @@ export function TrendLineChart() {
             <Area
               type="monotone"
               dataKey="pct"
-              stroke="#3fd68f"
+              stroke="#10b981"
               strokeWidth={2}
               fill="url(#trendGradient)"
               dot={false}
-              activeDot={{ r: 4, fill: '#3fd68f', stroke: 'var(--bg-card)', strokeWidth: 2 }}
+              activeDot={{ r: 4, fill: '#10b981', stroke: 'var(--bg-card)', strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

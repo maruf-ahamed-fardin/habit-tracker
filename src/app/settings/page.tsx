@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
-import { Download, Trash2, Bell, Moon, Sun, Shield } from 'lucide-react'
+import { Download, Trash2, Bell, Moon, Sun, Shield, Smartphone } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 import { useAppStore } from '@/store/useAppStore'
 import { format } from 'date-fns'
 
@@ -11,6 +12,41 @@ export default function SettingsPage() {
   const { habits, checks, notes, achievements, settings, setSettings, setHabits, setChecks, setNotes, setAchievements, isLoading } = useAppStore()
   const [resetting, setResetting] = useState(false)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [isInstalled, setIsInstalled] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as unknown as { standalone?: boolean }).standalone === true
+      setIsInstalled(isStandalone)
+
+      const handleAppInstalled = () => {
+        setIsInstalled(true)
+      }
+      window.addEventListener('appinstalled', handleAppInstalled)
+      return () => window.removeEventListener('appinstalled', handleAppInstalled)
+    }
+  }, [])
+
+  const handleInstallPWA = async () => {
+    if (typeof window === 'undefined') return
+    if (window.deferredPWAInstallPrompt) {
+      await window.deferredPWAInstallPrompt.prompt()
+      const { outcome } = await window.deferredPWAInstallPrompt.userChoice
+      if (outcome === 'accepted') {
+        toast.success('🎉 Habit Tracker installed!')
+        setIsInstalled(true)
+      }
+    } else {
+      if (isInstalled) {
+        toast.success('Habit Tracker is already installed as an app!')
+      } else {
+        toast('To install: click the Install icon in your browser address bar or Share > Add to Home Screen', {
+          icon: '📱',
+          duration: 5000,
+        })
+      }
+    }
+  }
 
   const toggleTheme = async () => {
     const newTheme = settings.theme === 'dark' ? 'light' : 'dark'
@@ -128,6 +164,32 @@ export default function SettingsPage() {
       ],
     },
     {
+      title: 'App & Installation',
+      items: [
+        {
+          icon: <Smartphone size={18} />,
+          label: 'Progressive Web App (PWA)',
+          description: isInstalled
+            ? 'Habit Tracker is running in standalone mode'
+            : 'Install Habit Tracker on your phone or desktop for quick offline access',
+          action: (
+            <button
+              onClick={handleInstallPWA}
+              className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all"
+              style={{
+                background: isInstalled ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-elevated)',
+                border: isInstalled ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border)',
+                color: isInstalled ? '#10b981' : 'var(--text-primary)',
+              }}
+            >
+              <Smartphone size={15} />
+              <span>{isInstalled ? 'Installed' : 'Install App'}</span>
+            </button>
+          ),
+        },
+      ],
+    },
+    {
       title: 'Notifications',
       items: [
         {
@@ -221,15 +283,7 @@ export default function SettingsPage() {
           className="flex items-center gap-4 p-5 rounded-2xl"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
         >
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold"
-            style={{
-              background: 'linear-gradient(135deg, #3fd68f 0%, #60a5fa 100%)',
-              boxShadow: '0 0 16px rgba(63,214,143,0.4)',
-            }}
-          >
-            H
-          </div>
+          <Logo size={48} showBadge />
           <div>
             <div className="font-bold text-lg" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
               Habit Tracker

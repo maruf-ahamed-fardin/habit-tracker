@@ -8,6 +8,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { ThemeToggle } from './ThemeToggle'
 import { KeyboardShortcutsModal } from './KeyboardShortcutsModal'
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
+import { Logo } from '@/components/ui/Logo'
 import { sound } from '@/lib/sound'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
@@ -76,23 +77,8 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold transition-transform group-hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #38bdf8 100%)',
-                boxShadow: '0 0 18px rgba(16,185,129,0.4)',
-                color: '#ffffff',
-              }}
-            >
-              H
-            </div>
-            <span
-              className="text-xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}
-            >
-              Habit Tracker
-            </span>
+          <Link href="/" className="flex items-center group">
+            <Logo size={36} withText />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -104,9 +90,9 @@ export function Navbar() {
                   key={href}
                   href={href}
                   className={cn(
-                    'relative px-4 py-2 rounded-xl text-sm font-medium flex items-center gap-2 transition-all duration-200',
+                    'relative px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all duration-200',
                     isActive
-                      ? 'text-white'
+                      ? 'text-[var(--text-primary)]'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]'
                   )}
                   onClick={() => sound.playClick()}
@@ -118,11 +104,18 @@ export function Navbar() {
                       style={{
                         background: 'var(--bg-elevated)',
                         border: '1px solid var(--border)',
+                        boxShadow: 'var(--shadow-card)',
                       }}
                       transition={{ type: 'spring' as const, stiffness: 450, damping: 32 }}
                     />
                   )}
-                  <Icon size={16} className="relative z-10" />
+                  <Icon
+                    size={16}
+                    className={cn(
+                      'relative z-10 transition-colors',
+                      isActive ? 'text-[var(--accent-green)]' : 'text-[var(--text-secondary)]'
+                    )}
+                  />
                   <span className="relative z-10">{label}</span>
                 </Link>
               )
@@ -147,8 +140,12 @@ export function Navbar() {
             <button
               type="button"
               onClick={handleToggleSound}
-              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bg-elevated)]"
-              style={{ border: '1px solid var(--border)', color: soundEnabled ? 'var(--accent-green)' : 'var(--text-muted)' }}
+              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bg-elevated)] active:scale-95"
+              style={{
+                background: 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: soundEnabled ? 'var(--accent-green)' : 'var(--text-muted)',
+              }}
               title={soundEnabled ? 'Mute Sound FX [M]' : 'Enable Sound FX [M]'}
             >
               {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
@@ -158,8 +155,12 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setShortcutsOpen(true)}
-              className="hidden lg:flex w-9 h-9 rounded-xl items-center justify-center transition-all hover:bg-[var(--bg-elevated)]"
-              style={{ border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+              className="hidden lg:flex w-9 h-9 rounded-xl items-center justify-center transition-all hover:bg-[var(--bg-elevated)] active:scale-95"
+              style={{
+                background: 'var(--bg-elevated)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-secondary)',
+              }}
               title="Keyboard Shortcuts [?]"
             >
               <Keyboard size={16} />
@@ -189,7 +190,7 @@ export function Navbar() {
                 href={href}
                 className={cn(
                   'relative flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-200',
-                  isActive ? 'text-white' : 'text-[var(--text-secondary)]'
+                  isActive ? 'text-[var(--text-primary)] font-semibold' : 'text-[var(--text-secondary)]'
                 )}
                 onClick={() => sound.playClick()}
               >
@@ -201,7 +202,13 @@ export function Navbar() {
                     transition={{ type: 'spring' as const, stiffness: 450, damping: 32 }}
                   />
                 )}
-                <Icon size={20} className="relative z-10" />
+                <Icon
+                  size={20}
+                  className={cn(
+                    'relative z-10 transition-colors',
+                    isActive ? 'text-[var(--accent-green)]' : 'text-[var(--text-secondary)]'
+                  )}
+                />
                 <span className="relative z-10 text-[10px] font-medium">{label}</span>
                 {isActive && <span className="nav-indicator" />}
               </Link>

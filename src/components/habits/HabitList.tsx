@@ -462,10 +462,13 @@ export function HabitList() {
               sound.playClick()
               setFilter('all')
             }}
-            className={cn(
-              'px-3 py-1 rounded-lg text-xs font-semibold transition-all',
-              filter === 'all' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
-            )}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+            style={{
+              background: filter === 'all' ? 'var(--bg-card)' : 'transparent',
+              color: filter === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              border: filter === 'all' ? '1px solid var(--border)' : '1px solid transparent',
+              boxShadow: filter === 'all' ? 'var(--shadow-card)' : 'none',
+            }}
           >
             All ({habits.length})
           </button>
@@ -476,13 +479,18 @@ export function HabitList() {
               sound.playClick()
               setFilter('pending')
             }}
-            className={cn(
-              'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'pending' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
-            )}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            style={{
+              background: filter === 'pending' ? 'var(--bg-card)' : 'transparent',
+              color: filter === 'pending' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              border: filter === 'pending' ? '1px solid var(--border)' : '1px solid transparent',
+              boxShadow: filter === 'pending' ? 'var(--shadow-card)' : 'none',
+            }}
           >
-            <Clock size={12} className="text-[var(--accent-amber)]" />
-            <span>Pending ({pendingTodayCount})</span>
+            <Clock size={13} style={{ color: 'var(--accent-amber)' }} />
+            <span style={{ color: filter === 'pending' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+              Pending ({pendingTodayCount})
+            </span>
           </button>
 
           <button
@@ -491,13 +499,18 @@ export function HabitList() {
               sound.playClick()
               setFilter('completed')
             }}
-            className={cn(
-              'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'completed' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
-            )}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            style={{
+              background: filter === 'completed' ? 'var(--bg-card)' : 'transparent',
+              color: filter === 'completed' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              border: filter === 'completed' ? '1px solid var(--border)' : '1px solid transparent',
+              boxShadow: filter === 'completed' ? 'var(--shadow-card)' : 'none',
+            }}
           >
-            <CheckCircle2 size={12} className="text-[var(--accent-green)]" />
-            <span>Done ({completedTodayCount})</span>
+            <CheckCircle2 size={13} style={{ color: 'var(--accent-green)' }} />
+            <span style={{ color: filter === 'completed' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+              Done ({completedTodayCount})
+            </span>
           </button>
 
           <button
@@ -506,13 +519,18 @@ export function HabitList() {
               sound.playClick()
               setFilter('streaks')
             }}
-            className={cn(
-              'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'streaks' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
-            )}
+            className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer"
+            style={{
+              background: filter === 'streaks' ? 'var(--bg-card)' : 'transparent',
+              color: filter === 'streaks' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              border: filter === 'streaks' ? '1px solid var(--border)' : '1px solid transparent',
+              boxShadow: filter === 'streaks' ? 'var(--shadow-card)' : 'none',
+            }}
           >
-            <Flame size={12} className="text-[var(--accent-amber)]" />
-            <span>Streaks 🔥</span>
+            <Flame size={13} style={{ color: 'var(--accent-amber)' }} />
+            <span style={{ color: filter === 'streaks' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+              Streaks 🔥
+            </span>
           </button>
         </div>
 

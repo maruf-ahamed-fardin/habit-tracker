@@ -44,7 +44,7 @@ export function HeroProgressRing({
       ? '#34d399'
       : pct > 0
       ? '#f59e0b'
-      : 'rgba(255, 255, 255, 0.12)'
+      : 'var(--border)'
 
   return (
     <div className="flex flex-col items-center">

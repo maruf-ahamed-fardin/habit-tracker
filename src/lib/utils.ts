@@ -6,12 +6,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const CATEGORIES = [
-  { value: 'health', label: 'Health', color: '#3fd68f', icon: '💪' },
+  { value: 'health', label: 'Health', color: '#10b981', icon: '💪' },
   { value: 'fitness', label: 'Fitness', color: '#f5a94e', icon: '🏃' },
   { value: 'learning', label: 'Learning', color: '#60a5fa', icon: '📚' },
   { value: 'work', label: 'Work', color: '#a78bfa', icon: '💼' },
   { value: 'mindfulness', label: 'Mindfulness', color: '#f472b6', icon: '🧘' },
-  { value: 'personal', label: 'Personal', color: '#9aa1ad', icon: '⭐' },
+  { value: 'personal', label: 'Personal', color: '#38bdf8', icon: '⭐' },
   { value: 'social', label: 'Social', color: '#fb923c', icon: '👥' },
   { value: 'creative', label: 'Creative', color: '#e879f9', icon: '🎨' },
 ]
