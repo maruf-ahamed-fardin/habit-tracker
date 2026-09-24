@@ -5,11 +5,11 @@ import { Navbar } from '@/components/layout/Navbar'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Forge — Build Better Habits',
-  description: 'A premium, animated habit tracker. Forge your best self — one day at a time.',
-  keywords: ['habit tracker', 'productivity', 'streak', 'daily habits', 'forge'],
+  title: 'Habit Tracker — Build Better Habits',
+  description: 'A premium, animated habit tracker. Build your best self — one day at a time.',
+  keywords: ['habit tracker', 'productivity', 'streak', 'daily habits'],
   openGraph: {
-    title: 'Forge — Build Better Habits',
+    title: 'Habit Tracker — Build Better Habits',
     description: 'A premium, animated habit tracker.',
     type: 'website',
   },

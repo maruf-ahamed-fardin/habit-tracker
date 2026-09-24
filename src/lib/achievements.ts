@@ -190,7 +190,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   },
   {
     key: 'xp_10000',
-    title: 'Legend of Forge',
+    title: 'Habit Master',
     description: 'Earn 10,000 XP — you are unstoppable',
     icon: '👑',
     xpReward: 0,

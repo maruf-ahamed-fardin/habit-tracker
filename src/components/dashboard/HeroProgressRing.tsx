@@ -79,7 +79,7 @@ export function HeroProgressRing({
           style={{ transform: 'rotate(-90deg)' }}
         >
           <defs>
-            <linearGradient id="forge-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="habit-ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#10b981" />
               <stop offset="60%" stopColor="#34d399" />
               <stop offset="100%" stopColor="#38bdf8" />
@@ -90,7 +90,7 @@ export function HeroProgressRing({
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke={pct >= 0.8 ? 'url(#forge-ring-gradient)' : ringColor}
+            stroke={pct >= 0.8 ? 'url(#habit-ring-gradient)' : ringColor}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeDasharray={circumference}
