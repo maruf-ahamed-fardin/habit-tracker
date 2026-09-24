@@ -1,7 +1,8 @@
 /* ========================================
    DESIGN TOKENS
 ======================================== */
-:root {
+:root,
+[data-theme='dark'] {
   /* Colors - Dark mode defaults (Rich Obsidian / Deep Slate) */
   --bg-base: #090d16;
   --bg-card: #101623;
@@ -314,15 +315,26 @@ h1, h2, h3, h4, h5 {
 /* ========================================
    GLASS MORPHISM UTILITY
 ======================================== */
-.glass {
-  background: rgba(20, 24, 32, 0.7);
+.glass,
+[data-theme='dark'] .glass {
+  background: rgba(14, 20, 32, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
 }
 
 [data-theme='light'] .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: 2px;
+  width: 14px;
+  height: 2.5px;
+  border-radius: 9999px;
+  background: var(--accent-green);
 }
 
 /* ========================================
