@@ -85,13 +85,13 @@ export function Navbar() {
                 color: '#ffffff',
               }}
             >
-              F
+              H
             </div>
             <span
               className="text-xl font-bold tracking-tight"
               style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}
             >
-              Forge
+              Habit Tracker
             </span>
           </Link>
 

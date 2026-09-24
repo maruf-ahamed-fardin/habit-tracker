@@ -5,6 +5,15 @@ import { useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { getAchievementByKey } from '@/lib/achievements'
 
+const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
+  id: i,
+  x: `${((i * 47) % 90) + 5}vw`,
+  y: `${((i * 61) % 90) + 5}vh`,
+  scale: 0.5 + ((i * 13) % 20) / 10,
+  rotate: (i * 137) % 720,
+  color: ['#3fd68f', '#f5a94e', '#a78bfa', '#60a5fa', '#ffd700'][i % 5],
+}))
+
 export function UnlockOverlay() {
   const { pendingAchievement, setPendingAchievement } = useAppStore()
   const achievement = pendingAchievement ? getAchievementByKey(pendingAchievement) : null
@@ -31,9 +40,9 @@ export function UnlockOverlay() {
           />
 
           {/* Confetti particles */}
-          {Array.from({ length: 20 }).map((_, i) => (
+          {PARTICLES.map((p) => (
             <motion.div
-              key={i}
+              key={p.id}
               initial={{
                 opacity: 1,
                 x: '50vw',
@@ -42,10 +51,10 @@ export function UnlockOverlay() {
               }}
               animate={{
                 opacity: 0,
-                x: `${Math.random() * 100}vw`,
-                y: `${Math.random() * 100}vh`,
-                scale: Math.random() * 2 + 0.5,
-                rotate: Math.random() * 720,
+                x: p.x,
+                y: p.y,
+                scale: p.scale,
+                rotate: p.rotate,
               }}
               transition={{ duration: 1.5, delay: 0.3, ease: 'easeOut' }}
               className="fixed z-[100] pointer-events-none"
@@ -53,7 +62,7 @@ export function UnlockOverlay() {
                 width: '8px',
                 height: '8px',
                 borderRadius: '2px',
-                background: ['#3fd68f', '#f5a94e', '#a78bfa', '#60a5fa', '#ffd700'][i % 5],
+                background: p.color,
               }}
             />
           ))}

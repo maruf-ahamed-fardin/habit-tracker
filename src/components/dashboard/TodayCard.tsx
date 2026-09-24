@@ -34,7 +34,7 @@ export function TodayCard() {
   }, 0)
 
   const headline = () => {
-    if (total === 0) return 'Add your first habit below to begin forging your routine'
+    if (total === 0) return 'Add your first habit below to begin tracking your routine'
     if (isAllDone) return '✨ All habits completed! Outstanding discipline today.'
     if (completed === 0) return `You have ${total} ${total === 1 ? 'habit' : 'habits'} lined up for today`
     return `${completed} of ${total} habits completed • ${remaining} left to go`

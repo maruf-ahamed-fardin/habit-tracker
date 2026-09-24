@@ -30,7 +30,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `forge-export-${format(new Date(), 'yyyy-MM-dd')}.json`
+    a.download = `habit-tracker-export-${format(new Date(), 'yyyy-MM-dd')}.json`
     a.click()
     URL.revokeObjectURL(url)
     toast.success('Data exported as JSON')
@@ -50,7 +50,7 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `forge-export-${format(new Date(), 'yyyy-MM-dd')}.csv`
+    a.download = `habit-tracker-export-${format(new Date(), 'yyyy-MM-dd')}.csv`
     a.click()
     URL.revokeObjectURL(url)
     toast.success('Data exported as CSV')
@@ -64,7 +64,7 @@ export default function SettingsPage() {
     const permission = await Notification.requestPermission()
     if (permission === 'granted') {
       toast.success('Notifications enabled!')
-      new Notification('Forge Reminders Active', {
+      new Notification('Habit Tracker Reminders Active', {
         body: 'You\'ll be reminded when your habits are due.',
         icon: '/favicon.ico',
       })
@@ -212,7 +212,7 @@ export default function SettingsPage() {
             Settings
           </h1>
           <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-            Customize your Forge experience
+            Customize your Habit Tracker experience
           </p>
         </div>
 
@@ -228,11 +228,11 @@ export default function SettingsPage() {
               boxShadow: '0 0 16px rgba(63,214,143,0.4)',
             }}
           >
-            F
+            H
           </div>
           <div>
             <div className="font-bold text-lg" style={{ fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
-              Forge
+              Habit Tracker
             </div>
             <div className="text-xs font-mono" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
               v1.0.0 · Build Better Habits

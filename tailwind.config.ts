@@ -42,7 +42,7 @@ const config: Config = {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-forge': 'linear-gradient(135deg, #3fd68f 0%, #60a5fa 100%)',
+        'gradient-brand': 'linear-gradient(135deg, #3fd68f 0%, #60a5fa 100%)',
       },
       boxShadow: {
         card: 'var(--shadow-card)',
