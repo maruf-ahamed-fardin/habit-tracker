@@ -1,0 +1,101 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Squircle Gradient -->
+    <linearGradient id="ht-bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#101726" />
+      <stop offset="100%" stop-color="#080c14" />
+    </linearGradient>
+
+    <!-- Border Gradient -->
+    <linearGradient id="ht-border-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#38bdf8" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0.35" />
+    </linearGradient>
+
+    <!-- Left Pillar: Emerald to Mint -->
+    <linearGradient id="ht-left-pillar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+
+    <!-- Right Pillar: Cyan to Deep Blue -->
+    <linearGradient id="ht-right-pillar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+
+    <!-- Check Swoop: Vibrant Gradient -->
+    <linearGradient id="ht-check-swoop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="40%" stop-color="#34d399" />
+      <stop offset="80%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#60a5fa" />
+    </linearGradient>
+
+    <!-- Golden Spark Gradient -->
+    <linearGradient id="ht-spark-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Center Glow -->
+    <radialGradient id="ht-center-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Outer Rounded Squircle Badge -->
+  <rect
+    x="4"
+    y="4"
+    width="92"
+    height="92"
+    rx="24"
+    fill="url(#ht-bg-grad)"
+    stroke="url(#ht-border-grad)"
+    stroke-width="3"
+  />
+
+  <!-- Center Ambient Radial Glow -->
+  <circle cx="50" cy="50" r="30" fill="url(#ht-center-glow)" />
+
+  <!-- Left Pillar of "H" -->
+  <rect
+    x="23"
+    y="22"
+    width="13"
+    height="56"
+    rx="6.5"
+    fill="url(#ht-left-pillar)"
+  />
+
+  <!-- Right Pillar of "H" -->
+  <rect
+    x="64"
+    y="22"
+    width="13"
+    height="56"
+    rx="6.5"
+    fill="url(#ht-right-pillar)"
+  />
+
+  <!-- Dynamic Habit Check Swoop (Connecting Crossbar) -->
+  <path
+    d="M 30 48 L 47 63 C 48.5 64.5 51 64.5 52.5 63 L 73 34"
+    fill="none"
+    stroke="url(#ht-check-swoop)"
+    stroke-width="9"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Golden Momentum Spark Star -->
+  <path
+    d="M 76 16 Q 76 22 82 22 Q 76 22 76 28 Q 76 22 70 22 Q 76 22 76 16 Z"
+    fill="url(#ht-spark-grad)"
+  />
+  <circle cx="76" cy="22" r="2" fill="#ffffff" />
+</svg>
