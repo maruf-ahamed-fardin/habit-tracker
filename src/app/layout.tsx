@@ -52,10 +52,10 @@ export default function RootLayout({
                 padding: '12px 16px',
               },
               success: {
-                iconTheme: { primary: '#3fd68f', secondary: 'transparent' },
+                iconTheme: { primary: '#10b981', secondary: 'transparent' },
               },
               error: {
-                iconTheme: { primary: '#ef6e6e', secondary: 'transparent' },
+                iconTheme: { primary: '#f43f5e', secondary: 'transparent' },
               },
             }}
           />

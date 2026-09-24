@@ -224,8 +224,9 @@ export default function SettingsPage() {
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold"
             style={{
-              background: 'linear-gradient(135deg, #3fd68f 0%, #60a5fa 100%)',
-              boxShadow: '0 0 16px rgba(63,214,143,0.4)',
+              background: 'linear-gradient(135deg, #10b981 0%, #38bdf8 100%)',
+              boxShadow: '0 0 16px rgba(16,185,129,0.35)',
+              color: '#ffffff',
             }}
           >
             H

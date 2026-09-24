@@ -11,7 +11,7 @@ const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
   y: `${((i * 61) % 90) + 5}vh`,
   scale: 0.5 + ((i * 13) % 20) / 10,
   rotate: (i * 137) % 720,
-  color: ['#3fd68f', '#f5a94e', '#a78bfa', '#60a5fa', '#ffd700'][i % 5],
+  color: ['#10b981', '#f59e0b', '#a855f7', '#38bdf8', '#ffd700'][i % 5],
 }))
 
 export function UnlockOverlay() {

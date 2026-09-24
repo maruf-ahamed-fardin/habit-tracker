@@ -18,7 +18,7 @@ export default function AchievementsPage() {
           animate={{ rotate: 360 }}
           transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
           className="w-10 h-10 rounded-full"
-          style={{ border: '2px solid var(--bg-elevated)', borderTop: '2px solid #3fd68f' }}
+          style={{ border: '2px solid var(--border)', borderTop: '2px solid var(--accent-green)' }}
         />
       </div>
     )
