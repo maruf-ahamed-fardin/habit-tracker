@@ -66,11 +66,11 @@ export function WeeklyBarChart() {
         {bars.map(({ date, done, total, pct, isFuture, isToday }, i) => {
           const heightPct = (pct / maxPct) * 100
           const color = isToday
-            ? '#3fd68f'
+            ? '#10b981'
             : pct === 100
-            ? '#3fd68f'
+            ? '#10b981'
             : pct > 0
-            ? '#60a5fa'
+            ? '#38bdf8'
             : 'var(--bg-elevated)'
 
           return (

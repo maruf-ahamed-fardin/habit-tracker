@@ -10,7 +10,7 @@ export function ParticleBackground() {
     if (!container) return
 
     const particles: HTMLDivElement[] = []
-    const colors = ['#3fd68f', '#60a5fa', '#a78bfa', '#f5a94e']
+    const colors = ['#10b981', '#38bdf8', '#a855f7', '#f59e0b']
     const count = 25
 
     for (let i = 0; i < count; i++) {
