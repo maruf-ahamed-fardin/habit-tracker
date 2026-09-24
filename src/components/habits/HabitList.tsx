@@ -470,7 +470,9 @@ export function HabitList() {
               boxShadow: filter === 'all' ? 'var(--shadow-card)' : 'none',
             }}
           >
-            All ({habits.length})
+            <span style={{ color: filter === 'all' ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+              All ({habits.length})
+            </span>
           </button>
 
           <button
