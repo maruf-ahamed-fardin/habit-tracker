@@ -2,15 +2,15 @@ import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Habit Tracker — Build Better Habits',
+    name: 'Habit Tracker',
     short_name: 'Habit Tracker',
-    description: 'Track your daily habits, build unbreakable streaks, and level up your discipline.',
+    description: 'A calm habit tracker. Tap once a day, watch your streaks grow.',
     start_url: '/?source=pwa',
     id: '/?source=pwa',
     scope: '/',
     display: 'standalone',
-    background_color: '#090d16',
-    theme_color: '#10b981',
+    background_color: '#f6f7f4',
+    theme_color: '#3f7a5e',
     orientation: 'portrait-primary',
     categories: ['productivity', 'lifestyle', 'health'],
     icons: [

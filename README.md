@@ -6,25 +6,20 @@ A gamified habit tracker built with **Next.js 16**, **React 19**, **TypeScript**
 
 ## ✨ Features
 
-- **Interactive Weekly Matrix**: 7-day checklist grid with celebratory audio chimes, particle confetti bursts, floating XP indicators, and keyboard shortcuts (`1-9` to toggle today's habits).
-- **Gamification & Progression**:
-  - XP system & Level progression (Levels 1–12+).
-  - 20 tiered milestone achievements (Bronze, Silver, Gold, Platinum) with unlock fanfare and particle animations.
-- **Analytics & Insights**:
-  - **12-Week Consistency Heatmap**: GitHub-style contribution grid with interactive tooltips and daily journal notes.
-  - **30-Day Trendline**: Gradient area chart tracking daily completion percentage.
-  - **Weekly Activity**: Week-by-week bar charts with percentage benchmarks.
-- **Habit Journaling**: Slide-out drawer per habit with 30-day history and daily note recording.
-- **Micro-Interactions & Audio**: Zero-latency procedural Web Audio synthesizer (check clicks, fanfare chord arpeggios, level-up melodies) and confetti effects.
-- **Data Portability**: Export your data anytime to JSON or CSV (Excel/Sheets compatible).
-- **Dark & Light Modes**: Sleek Obsidian dark mode by default with clean light mode toggle.
+- **Today**: one tap checks a habit off. Cards fill with the habit’s color, a segmented ring shows what’s left, and every check-in has an Undo.
+- **Weekly goals that respect rest days**: “3× a week” habits count streaks in weeks, so planned rest days never break them.
+- **Insights**: completion trend (7/30/90 days), strongest and weakest weekdays, per-habit progress against its goal, and a 12-week heatmap.
+- **Habits**: drag to reorder, and a page per habit with a month calendar for fixing past days, stats and daily notes.
+- **You**: level and XP (calculated from your check-ins, so it never resets), 20 achievements, theme (light, dark or system), sound (off by default), install as an app, export to CSV/JSON.
+- **Keyboard and command menu**: `1`–`9` to check off, `N` for a new habit, `Ctrl/⌘ K` to search everything.
+- **Works on every screen**: bottom tab bar on phones, sidebar on desktop, installable PWA.
 
 ---
 
 ## 🛠️ Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-- **UI Library**: [React 19](https://react.dev/)
+- **UI Library**: [React 19](https://react.dev/) + [shadcn/ui](https://ui.shadcn.com/) (Radix)
 - **Language**: [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/) & [canvas-confetti](https://github.com/catdad/canvas-confetti)
@@ -64,11 +59,10 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 | Shortcut | Action |
 | :--- | :--- |
-| `1` – `9` | Toggle habit #1 through #9 for today |
-| `←` / `→` | Navigate previous / next week in habit matrix |
-| `T` | Toggle Dark / Light theme |
-| `M` | Mute / Unmute sound effects |
-| `?` | Open keyboard shortcuts modal |
+| `1` – `9` | Check off habit #1 through #9 for today |
+| `N` | New habit |
+| `Ctrl` / `⌘` + `K` | Search habits, pages and actions |
+| `?` | Show keyboard shortcuts |
 
 ---
 

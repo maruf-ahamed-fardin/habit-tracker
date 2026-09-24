@@ -1,8 +1,18 @@
 // Synthesized Web Audio API Sound Effects (Zero external assets, zero latency)
 
+const STORAGE_KEY = 'habit-tracker:sound'
+
 class SoundEngine {
   private ctx: AudioContext | null = null
-  public enabled: boolean = true
+  /** Off by default; the choice is remembered per device. */
+  public enabled: boolean = readEnabled()
+
+  setEnabled(on: boolean) {
+    this.enabled = on
+    try {
+      localStorage.setItem(STORAGE_KEY, on ? 'on' : 'off')
+    } catch {}
+  }
 
   private getContext(): AudioContext | null {
     if (typeof window === 'undefined') return null
@@ -156,3 +166,12 @@ class SoundEngine {
 }
 
 export const sound = new SoundEngine()
+
+function readEnabled(): boolean {
+  if (typeof window === 'undefined') return false
+  try {
+    return localStorage.getItem(STORAGE_KEY) === 'on'
+  } catch {
+    return false
+  }
+}

@@ -1,58 +1,40 @@
-import { format, parseISO, startOfWeek, endOfWeek, eachDayOfInterval, subDays, addDays, isBefore, isAfter, isToday, isSameDay } from 'date-fns'
+import { addDays, format, parseISO, startOfWeek, subDays } from 'date-fns'
 
-export const TODAY = format(new Date(), 'yyyy-MM-dd')
+/** Weeks start on Sunday, matching how weekly goals were counted before. */
+export const WEEK_STARTS_ON = 0 as const
 
-export function formatDate(date: Date | string): string {
-  const d = typeof date === 'string' ? parseISO(date) : date
-  return format(d, 'yyyy-MM-dd')
+/** yyyy-MM-dd in the user's local time zone. */
+export function dayKey(date: Date): string {
+  return format(date, 'yyyy-MM-dd')
 }
 
-export function formatDisplay(date: Date | string): string {
-  const d = typeof date === 'string' ? parseISO(date) : date
-  return format(d, 'MMM d, yyyy')
+/** Parse a yyyy-MM-dd key as local noon, so DST shifts never move the day. */
+export function fromKey(key: string): Date {
+  return parseISO(`${key}T12:00:00`)
 }
 
-export function formatDayLabel(date: Date | string): string {
-  const d = typeof date === 'string' ? parseISO(date) : date
-  return format(d, 'EEE')
+export function shiftKey(key: string, days: number): string {
+  return dayKey(addDays(fromKey(key), days))
 }
 
-export function formatDayNumber(date: Date | string): string {
-  const d = typeof date === 'string' ? parseISO(date) : date
-  return format(d, 'd')
+export function weekStartKey(key: string): string {
+  return dayKey(startOfWeek(fromKey(key), { weekStartsOn: WEEK_STARTS_ON }))
 }
 
-export function getWeekDays(weekStart: Date): Date[] {
-  return eachDayOfInterval({
-    start: weekStart,
-    end: endOfWeek(weekStart, { weekStartsOn: 0 }),
-  })
+/** The 7 day keys of the week containing `key`. */
+export function weekKeys(key: string): string[] {
+  const start = weekStartKey(key)
+  return Array.from({ length: 7 }, (_, i) => shiftKey(start, i))
 }
 
-export function getWeekStart(date: Date): Date {
-  return startOfWeek(date, { weekStartsOn: 0 })
+/** The last `n` day keys ending at (and including) `endKey`, oldest first. */
+export function lastNDays(endKey: string, n: number): string[] {
+  const end = fromKey(endKey)
+  return Array.from({ length: n }, (_, i) => dayKey(subDays(end, n - 1 - i)))
 }
 
-export function isFutureDate(dateStr: string): boolean {
-  return isAfter(parseISO(dateStr), new Date())
+export function msUntilMidnight(now = new Date()): number {
+  const next = new Date(now)
+  next.setHours(24, 0, 0, 50)
+  return next.getTime() - now.getTime()
 }
-
-export function isTodayDate(dateStr: string): boolean {
-  return isToday(parseISO(dateStr))
-}
-
-export function getLast12WeeksGrid(): string[][] {
-  const today = new Date()
-  const grid: string[][] = []
-
-  // 12 columns (weeks), 7 rows (days Sun-Sat)
-  for (let col = 11; col >= 0; col--) {
-    const weekStart = startOfWeek(subDays(today, col * 7), { weekStartsOn: 0 })
-    const days = getWeekDays(weekStart)
-    grid.push(days.map(d => formatDate(d)))
-  }
-
-  return grid
-}
-
-export { format, parseISO, subDays, addDays, isBefore, isAfter, isToday, isSameDay, startOfWeek, endOfWeek }

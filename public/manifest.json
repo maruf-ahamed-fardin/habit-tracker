@@ -6,8 +6,8 @@
   "id": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#090d16",
-  "theme_color": "#10b981",
+  "background_color": "#f6f7f4",
+  "theme_color": "#3f7a5e",
   "orientation": "portrait-primary",
   "categories": ["productivity", "lifestyle", "health"],
   "icons": [
@@ -38,21 +38,21 @@
   ],
   "shortcuts": [
     {
-      "name": "Dashboard",
+      "name": "Today",
       "url": "/",
-      "description": "View today's progress and stats",
+      "description": "Check off today's habits",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
       "name": "Habits",
       "url": "/habits",
-      "description": "Manage routine habits and streaks",
+      "description": "Your habits and streaks",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Analytics",
-      "url": "/analytics",
-      "description": "Consistency heatmap and trend metrics",
+      "name": "Insights",
+      "url": "/insights",
+      "description": "Trends, best days and heatmap",
       "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
     }
   ]

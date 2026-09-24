@@ -1,46 +1,56 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
-export const CATEGORIES = [
-  { value: 'health', label: 'Health', color: '#10b981', icon: '💪' },
-  { value: 'fitness', label: 'Fitness', color: '#f5a94e', icon: '🏃' },
-  { value: 'learning', label: 'Learning', color: '#60a5fa', icon: '📚' },
-  { value: 'work', label: 'Work', color: '#a78bfa', icon: '💼' },
-  { value: 'mindfulness', label: 'Mindfulness', color: '#f472b6', icon: '🧘' },
-  { value: 'personal', label: 'Personal', color: '#38bdf8', icon: '⭐' },
-  { value: 'social', label: 'Social', color: '#fb923c', icon: '👥' },
-  { value: 'creative', label: 'Creative', color: '#e879f9', icon: '🎨' },
-]
-
-export const MOTIVATIONAL_QUOTES = [
-  { text: "We are what we repeatedly do. Excellence is not an act, but a habit.", author: "Aristotle" },
-  { text: "The secret of your future is hidden in your daily routine.", author: "Mike Murdock" },
-  { text: "Small habits make a big difference. Consistency beats intensity.", author: "James Clear" },
-  { text: "You don't rise to the level of your goals. You fall to the level of your systems.", author: "James Clear" },
-  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
-  { text: "Motivation is what gets you started. Habit is what keeps you going.", author: "Jim Ryun" },
-  { text: "The chains of habit are too light to be felt until they are too heavy to be broken.", author: "Warren Buffett" },
-  { text: "First forget inspiration. Habit is more dependable.", author: "Octavia Butler" },
-  { text: "In essence, if we want to direct our lives, we must take control of our consistent actions.", author: "Tony Robbins" },
-  { text: "Habit is a cable; we weave a thread of it each day, and at last we cannot break it.", author: "Horace Mann" },
-]
-
-export function getMotivationalQuote(seed?: number): { text: string; author: string } {
-  const idx = seed !== undefined ? seed % MOTIVATIONAL_QUOTES.length : Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)
-  return MOTIVATIONAL_QUOTES[idx]
-}
+export { cn } from 'cn'
 
 export const PRESET_EMOJIS = [
-  '💪', '🏃', '🚴', '🧘', '📚', '✍️', '💧', '🥗', '😴', '🧠',
-  '💊', '🎯', '🎸', '🎨', '🌿', '☕', '🧹', '💰', '📱', '🔕',
-  '🐕', '🌅', '❄️', '🔥', '⭐', '🎭', '🏊', '🧃', '📝', '🎮',
+  '💧', '💪', '🏃', '🚶', '🧘', '📚', '✍️', '🥗', '😴', '🧠',
+  '💊', '🎯', '🎸', '🎨', '🌿', '☕', '🧹', '💰', '📵', '🦷',
+  '🐕', '🌅', '❄️', '🔥', '⭐', '🏊', '🚴', '🍎', '📝', '🙏',
 ]
 
-export function formatNumber(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`
-  return n.toString()
+// First keyword match wins, so put the more specific words first.
+const EMOJI_HINTS: [RegExp, string][] = [
+  [/water|drink|hydrat/i, '💧'],
+  [/meditat|breath|mindful|yoga/i, '🧘'],
+  [/read|book|page/i, '📚'],
+  [/journal|write|diary/i, '✍️'],
+  [/walk|steps/i, '🚶'],
+  [/run|jog/i, '🏃'],
+  [/gym|workout|lift|push|exercise|train/i, '💪'],
+  [/swim/i, '🏊'],
+  [/bike|cycl/i, '🚴'],
+  [/sleep|bed/i, '😴'],
+  [/salad|veg|eat|meal|diet|cook/i, '🥗'],
+  [/fruit|apple/i, '🍎'],
+  [/vitamin|pill|medic/i, '💊'],
+  [/phone|screen|social/i, '📵'],
+  [/floss|teeth|brush/i, '🦷'],
+  [/guitar|piano|music|practi/i, '🎸'],
+  [/draw|paint|art|sketch/i, '🎨'],
+  [/clean|tidy/i, '🧹'],
+  [/save|money|budget|spend/i, '💰'],
+  [/pray|grat/i, '🙏'],
+  [/learn|study|code|language/i, '🧠'],
+  [/dog|pet/i, '🐕'],
+  [/wake|morning|sunrise/i, '🌅'],
+  [/cold|shower/i, '❄️'],
+  [/plant|garden/i, '🌿'],
+  [/coffee|tea/i, '☕'],
+]
+
+export function guessEmoji(name: string): string | null {
+  for (const [re, emoji] of EMOJI_HINTS) if (re.test(name)) return emoji
+  return null
+}
+
+export const HABIT_IDEAS = [
+  { name: 'Drink 2L water', emoji: '💧', weeklyGoal: 7 },
+  { name: 'Walk 20 minutes', emoji: '🚶', weeklyGoal: 7 },
+  { name: 'Read 20 pages', emoji: '📚', weeklyGoal: 5 },
+  { name: '10 min meditation', emoji: '🧘', weeklyGoal: 7 },
+  { name: 'Workout', emoji: '💪', weeklyGoal: 3 },
+  { name: 'No phone after 10pm', emoji: '📵', weeklyGoal: 7 },
+]
+
+export function frequencyLabel(weeklyGoal: number): string {
+  if (weeklyGoal >= 7) return 'Every day'
+  return `${weeklyGoal}× a week`
 }

@@ -1,5 +1,5 @@
 // Habit Tracker — Progressive Web App Service Worker
-const CACHE_NAME = 'habit-tracker-v2'
+const CACHE_NAME = 'habit-tracker-v3'
 const IS_DEV =
   self.location.hostname === 'localhost' ||
   self.location.hostname === '127.0.0.1' ||
@@ -8,9 +8,8 @@ const IS_DEV =
 const STATIC_ASSETS = [
   '/',
   '/habits',
-  '/analytics',
-  '/achievements',
-  '/settings',
+  '/insights',
+  '/you',
   '/manifest.json',
   '/favicon.svg',
   '/icon.svg',
