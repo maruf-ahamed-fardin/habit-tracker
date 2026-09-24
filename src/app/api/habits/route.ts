@@ -24,11 +24,11 @@ export async function POST(req: NextRequest) {
     const count = await prisma.habit.count()
     const habit = await prisma.habit.create({
       data: {
-        name,
+        name: name.trim(),
         emoji,
-        color: color || '#3fd68f',
+        color: color || '#10b981',
         category: category || 'personal',
-        weeklyGoal: weeklyGoal || 7,
+        weeklyGoal: Number(weeklyGoal) || 7,
         order: count,
         reminderTime: reminderTime || null,
       },
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(habit, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to create habit' }, { status: 500 })
+    console.error('Error creating habit:', error)
+    return NextResponse.json({ error: 'Failed to create habit', details: error instanceof Error ? error.message : String(error) }, { status: 500 })
   }
 }

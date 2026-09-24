@@ -14,7 +14,7 @@ model Habit {
   id           String   @id @default(cuid())
   name         String
   emoji        String
-  color        String   @default("#3fd68f")
+  color        String   @default("#10b981")
   category     String   @default("personal")
   weeklyGoal   Int      @default(7)
   order        Int      @default(0)
