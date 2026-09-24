@@ -464,7 +464,9 @@ export function HabitList() {
             }}
             className={cn(
               'px-3 py-1 rounded-lg text-xs font-semibold transition-all',
-              filter === 'all' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
+              filter === 'all'
+                ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/40'
             )}
           >
             All ({habits.length})
@@ -478,7 +480,9 @@ export function HabitList() {
             }}
             className={cn(
               'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'pending' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
+              filter === 'pending'
+                ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/40'
             )}
           >
             <Clock size={12} className="text-[var(--accent-amber)]" />
@@ -493,7 +497,9 @@ export function HabitList() {
             }}
             className={cn(
               'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'completed' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
+              filter === 'completed'
+                ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/40'
             )}
           >
             <CheckCircle2 size={12} className="text-[var(--accent-green)]" />
@@ -508,7 +514,9 @@ export function HabitList() {
             }}
             className={cn(
               'px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all',
-              filter === 'streaks' ? 'bg-[var(--bg-card)] text-white shadow-sm' : 'text-[var(--text-secondary)] hover:text-white'
+              filter === 'streaks'
+                ? 'bg-[var(--bg-card)] text-[var(--text-primary)] shadow-sm border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-card)]/40'
             )}
           >
             <Flame size={12} className="text-[var(--accent-amber)]" />
