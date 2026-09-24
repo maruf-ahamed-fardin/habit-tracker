@@ -2,12 +2,13 @@
 
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Sparkles, ChevronDown, Tag } from 'lucide-react'
+import { Plus, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAppStore } from '@/store/useAppStore'
-import { PRESET_EMOJIS, CATEGORIES } from '@/lib/utils'
+import { PRESET_EMOJIS, CATEGORIES, cn } from '@/lib/utils'
 import { sound } from '@/lib/sound'
 import { triggerCheckConfetti } from '@/lib/confetti'
+import { HabitForm } from './HabitForm'
 
 export function QuickAddHabit() {
   const [name, setName] = useState('')
@@ -16,7 +17,9 @@ export function QuickAddHabit() {
   const [category, setCategory] = useState('personal')
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [showCategoryPicker, setShowCategoryPicker] = useState(false)
+  const [showFullModal, setShowFullModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hasInputError, setHasInputError] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const { addHabit, habits, addXP } = useAppStore()
@@ -27,7 +30,10 @@ export function QuickAddHabit() {
     if (e) e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) {
-      toast.error('Please enter a habit name')
+      sound.playClick()
+      setHasInputError(true)
+      setTimeout(() => setHasInputError(false), 1200)
+      toast.error('Please enter a habit name first!', { id: 'quick-add-empty' })
       inputRef.current?.focus()
       return
     }
@@ -148,12 +154,18 @@ export function QuickAddHabit() {
             ref={inputRef}
             type="text"
             value={name}
-            onChange={e => setName(e.target.value)}
+            onChange={e => {
+              setName(e.target.value)
+              if (hasInputError) setHasInputError(false)
+            }}
             placeholder="Quick Add: Type habit name & press Enter… [N]"
-            className="w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all placeholder:text-[var(--text-muted)]"
+            className={cn(
+              "w-full h-10 px-3.5 rounded-xl text-sm outline-none transition-all placeholder:text-[var(--text-muted)]",
+              hasInputError && "ring-2 ring-[var(--accent-rose)] animate-shake"
+            )}
             style={{
               background: 'var(--bg-elevated)',
-              border: '1px solid var(--border)',
+              border: hasInputError ? '1px solid var(--accent-rose)' : '1px solid var(--border)',
               color: 'var(--text-primary)',
             }}
           />
@@ -169,9 +181,9 @@ export function QuickAddHabit() {
             }}
             className="h-10 px-3 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all"
             style={{
-              background: `${currentCat.color}15`,
+              background: `${currentCat.color}18`,
               color: currentCat.color,
-              border: `1px solid ${currentCat.color}35`,
+              border: `1px solid ${currentCat.color}40`,
             }}
           >
             <span>{currentCat.icon}</span>
@@ -237,7 +249,7 @@ export function QuickAddHabit() {
               className="w-6 h-7 rounded-lg text-xs font-mono font-bold transition-all hover:scale-105 active:scale-95"
               style={{
                 background: weeklyGoal === n ? 'var(--accent-green)' : 'transparent',
-                color: weeklyGoal === n ? '#090d16' : 'var(--text-secondary)',
+                color: weeklyGoal === n ? '#ffffff' : 'var(--text-secondary)',
               }}
               title={`${n} days per week`}
             >
@@ -252,21 +264,47 @@ export function QuickAddHabit() {
         {/* Add Button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting || !name.trim()}
+          disabled={isSubmitting}
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}
-          className="h-10 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="h-10 px-4 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
             color: '#ffffff',
-            boxShadow: name.trim() ? '0 0 16px rgba(16, 185, 129, 0.4)' : 'none',
+            boxShadow: name.trim() ? '0 0 18px rgba(16, 185, 129, 0.45)' : 'none',
+            opacity: name.trim() ? 1 : 0.88,
           }}
+          title={name.trim() ? 'Click to add habit (or press Enter)' : 'Type a habit name first, then click Add'}
         >
           <Plus size={16} strokeWidth={2.5} />
           <span>Add</span>
-          <span className="hidden sm:inline opacity-75 font-mono text-[10px]">⏎</span>
+          <span className="hidden sm:inline opacity-80 font-mono text-[10px]">⏎</span>
         </motion.button>
+
+        {/* More Options Modal Toggle */}
+        <button
+          type="button"
+          onClick={() => {
+            sound.playClick()
+            setShowFullModal(true)
+          }}
+          className="h-10 w-10 rounded-xl flex items-center justify-center transition-all hover:bg-[var(--bg-elevated)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+          style={{
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--border)',
+          }}
+          title="More options & custom settings"
+        >
+          <SlidersHorizontal size={15} />
+        </button>
       </form>
+
+      {/* Full Habit Creation Modal */}
+      <HabitForm
+        isOpen={showFullModal}
+        onClose={() => setShowFullModal(false)}
+        showTrigger={false}
+      />
     </div>
   )
 }

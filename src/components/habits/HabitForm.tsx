@@ -21,10 +21,28 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>
 
-export function HabitForm() {
-  const [isOpen, setIsOpen] = useState(false)
+export function HabitForm({
+  isOpen: externalIsOpen,
+  onClose: externalOnClose,
+  showTrigger = true,
+}: {
+  isOpen?: boolean
+  onClose?: () => void
+  showTrigger?: boolean
+}) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false)
+  const isControlled = typeof externalIsOpen === 'boolean'
+  const isOpen = isControlled ? externalIsOpen : internalIsOpen
+  const setIsOpen = (val: boolean) => {
+    if (isControlled) {
+      if (!val && externalOnClose) externalOnClose()
+    } else {
+      setInternalIsOpen(val)
+    }
+  }
+
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
-  const { addHabit, habits } = useAppStore()
+  const { addHabit, habits, addXP } = useAppStore()
 
   const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -33,7 +51,7 @@ export function HabitForm() {
       emoji: '💪',
       weeklyGoal: 7,
       category: 'personal',
-      color: '#3fd68f',
+      color: '#10b981',
     },
   })
 
@@ -50,6 +68,7 @@ export function HabitForm() {
       if (!res.ok) throw new Error('Failed')
       const habit = await res.json()
       addHabit(habit)
+      addXP(10)
 
       // Check first habit achievement
       if (habits.length === 0) {
@@ -57,10 +76,10 @@ export function HabitForm() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ key: 'first_habit' }),
-        })
+        }).catch(() => {})
       }
 
-      toast.success(`"${data.name}" added to your habits!`)
+      toast.success(`"${data.name}" added to your habits! (+10 XP)`)
       reset()
       setIsOpen(false)
     } catch {
@@ -70,21 +89,23 @@ export function HabitForm() {
 
   return (
     <div>
-      {/* Add Button */}
-      <motion.button
-        onClick={() => setIsOpen(true)}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold text-sm transition-all"
-        style={{
-          background: 'linear-gradient(135deg, #3fd68f 0%, #2bc97a 100%)',
-          color: '#0d1017',
-          boxShadow: '0 0 20px rgba(63,214,143,0.3)',
-        }}
-      >
-        <Plus size={18} />
-        Add New Habit
-      </motion.button>
+      {/* Optional Trigger Button */}
+      {showTrigger && (
+        <motion.button
+          onClick={() => setIsOpen(true)}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full flex items-center justify-center gap-2 py-3 px-6 rounded-xl font-semibold text-sm transition-all shadow-sm"
+          style={{
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            color: '#ffffff',
+            boxShadow: '0 0 20px rgba(16,185,129,0.3)',
+          }}
+        >
+          <Plus size={18} />
+          Add New Habit
+        </motion.button>
+      )}
 
       {/* Modal */}
       <AnimatePresence>
@@ -211,9 +232,9 @@ export function HabitForm() {
                           onClick={() => setValue('weeklyGoal', n)}
                           className="flex-1 h-9 rounded-lg text-sm font-mono font-semibold transition-all"
                           style={{
-                            background: goal === n ? '#3fd68f' : 'var(--bg-elevated)',
-                            color: goal === n ? '#0d1017' : 'var(--text-secondary)',
-                            border: `1px solid ${goal === n ? '#3fd68f' : 'var(--border)'}`,
+                            background: goal === n ? 'var(--accent-green)' : 'var(--bg-elevated)',
+                            color: goal === n ? '#ffffff' : 'var(--text-secondary)',
+                            border: `1px solid ${goal === n ? 'var(--accent-green)' : 'var(--border)'}`,
                           }}
                         >
                           {n}
@@ -275,8 +296,8 @@ export function HabitForm() {
                   whileTap={{ scale: 0.97 }}
                   className="w-full h-12 rounded-xl font-semibold text-sm disabled:opacity-50 transition-opacity"
                   style={{
-                    background: 'linear-gradient(135deg, #3fd68f 0%, #2bc97a 100%)',
-                    color: '#0d1017',
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    color: '#ffffff',
                   }}
                 >
                   {isSubmitting ? 'Adding…' : '+ Add Habit'}
