@@ -26,19 +26,30 @@ export function PWARegister() {
   const [showBanner, setShowBanner] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
 
-  // 1. Register Service Worker
+  // 1. Register Service Worker & Clean Obsolete Caches
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
+    if (typeof window !== 'undefined') {
+      if ('caches' in window) {
+        // Clean any old v1 cache that might hold stale chunks
+        caches.keys().then((keys) => {
+          keys.forEach((key) => {
+            if (key === 'habit-tracker-v1') {
+              caches.delete(key)
+            }
+          })
+        })
+      }
+
+      if ('serviceWorker' in navigator) {
         navigator.serviceWorker
           .register('/sw.js')
           .then((registration) => {
-            console.log('[PWA] Service Worker registered with scope:', registration.scope)
+            registration.update()
           })
           .catch((error) => {
             console.error('[PWA] Service Worker registration failed:', error)
           })
-      })
+      }
     }
   }, [])
 

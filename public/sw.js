@@ -1,5 +1,10 @@
 // Habit Tracker — Progressive Web App Service Worker
-const CACHE_NAME = 'habit-tracker-v1'
+const CACHE_NAME = 'habit-tracker-v2'
+const IS_DEV =
+  self.location.hostname === 'localhost' ||
+  self.location.hostname === '127.0.0.1' ||
+  self.location.hostname.endsWith('.local')
+
 const STATIC_ASSETS = [
   '/',
   '/habits',
@@ -13,8 +18,13 @@ const STATIC_ASSETS = [
   '/icons/icon-512x512.png',
 ]
 
-// 1. Install Event: Cache Core App Shell
+// 1. Install Event: Skip waiting and cache app shell (production only)
 self.addEventListener('install', (event) => {
+  self.skipWaiting()
+  if (IS_DEV) {
+    // In development mode, do not pre-cache to avoid serving stale bundles during HMR
+    return
+  }
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS).catch((err) => {
@@ -22,16 +32,16 @@ self.addEventListener('install', (event) => {
       })
     })
   )
-  self.skipWaiting()
 })
 
-// 2. Activate Event: Clean up outdated caches
+// 2. Activate Event: Clean up outdated caches immediately and claim clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
+            console.log('[PWA SW] Deleting obsolete cache:', key)
             return caches.delete(key)
           }
         })
@@ -41,13 +51,23 @@ self.addEventListener('activate', (event) => {
   self.clients.claim()
 })
 
-// 3. Fetch Event: Network-First for APIs, Stale-While-Revalidate for Static Assets
+// 3. Fetch Event
 self.addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
+  // In development, bypass service worker caching completely so changes reflect instantly
+  if (IS_DEV) {
+    return
+  }
+
   // Skip non-GET requests and browser extensions
   if (request.method !== 'GET' || !url.protocol.startsWith('http')) {
+    return
+  }
+
+  // Skip Next.js HMR or development internals
+  if (url.pathname.includes('/_next/webpack-hmr') || url.pathname.includes('hot-update')) {
     return
   }
 
@@ -69,7 +89,7 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Static Assets (_next/static, images, icons, fonts): Cache-First
+  // Static Assets (_next/static, images, icons, fonts): Stale-While-Revalidate
   if (
     url.pathname.startsWith('/_next/static') ||
     url.pathname.startsWith('/icons') ||
@@ -79,14 +99,15 @@ self.addEventListener('fetch', (event) => {
   ) {
     event.respondWith(
       caches.match(request).then((cached) => {
-        if (cached) return cached
-        return fetch(request).then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone()
+        const fetchPromise = fetch(request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone()
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone))
           }
-          return response
-        })
+          return networkResponse
+        }).catch(() => cached)
+
+        return cached || fetchPromise
       })
     )
     return
@@ -105,8 +126,8 @@ self.addEventListener('fetch', (event) => {
       .catch(async () => {
         const cached = await caches.match(request)
         if (cached) return cached
-        // Fallback to home page if available in cache
         return caches.match('/')
       })
   )
 })
+
