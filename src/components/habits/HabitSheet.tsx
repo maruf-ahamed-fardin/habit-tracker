@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'framer-motion'
+import { itemVariants, listVariants } from '@/lib/motion'
 import { ChevronDown, Minus, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -146,8 +147,8 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
   }
 
   return (
-    <form onSubmit={submit} className="grid gap-5" noValidate>
-      <div className="grid gap-2">
+    <motion.form onSubmit={submit} variants={listVariants} initial="hidden" animate="show" className="grid gap-5" noValidate>
+      <motion.div variants={itemVariants} className="grid gap-2">
         <Label htmlFor={`${ids}-name`}>What do you want to do?</Label>
         <div className="flex gap-2">
           <Popover open={emojiOpen} onOpenChange={setEmojiOpen}>
@@ -222,9 +223,9 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
             ))}
           </div>
         )}
-      </div>
+      </motion.div>
 
-      <div className="grid gap-2">
+      <motion.div variants={itemVariants} className="grid gap-2">
         <Label id={`${ids}-freq`}>How often?</Label>
         <ToggleGroup
           type="single"
@@ -274,9 +275,9 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
         {goal < 7 && (
           <p className="text-xs text-muted-foreground">Rest days won’t break your streak. It counts weeks where you hit {goal}.</p>
         )}
-      </div>
+      </motion.div>
 
-      <div className="grid gap-3">
+      <motion.div variants={itemVariants} className="grid gap-3">
         <button
           type="button"
           onClick={() => setMoreOpen(o => !o)}
@@ -308,8 +309,8 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
                           aria-pressed={selected}
                           onClick={() => setColor(c.hex)}
                           className={cn(
-                            'size-8 rounded-full outline-none ring-offset-2 ring-offset-background transition-transform hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50',
-                            selected && 'ring-2 ring-foreground'
+                            'size-8 rounded-full outline-none ring-offset-2 ring-offset-background transition-[transform,box-shadow] duration-200 hover:scale-110 focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-90',
+                            selected && 'scale-110 ring-2 ring-foreground'
                           )}
                           style={{ background: `var(--habit-${c.key})` }}
                         />
@@ -331,9 +332,9 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
-      <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row sm:items-center">
+      <motion.div variants={itemVariants} className="flex flex-col-reverse gap-2 pt-1 sm:flex-row sm:items-center">
         {habit && (
           <Button type="button" variant="ghost" className="h-11 text-destructive hover:text-destructive sm:mr-auto" onClick={() => setConfirmDelete(true)}>
             <Trash2 />
@@ -343,7 +344,7 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
         <Button type="submit" disabled={saving} className="h-11 rounded-xl text-base sm:ml-auto sm:min-w-36 sm:text-sm">
           {habit ? 'Save changes' : 'Create habit'}
         </Button>
-      </div>
+      </motion.div>
 
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>
@@ -361,7 +362,7 @@ function HabitForm({ habit, onDone }: { habit?: Habit; onDone: () => void }) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </form>
+    </motion.form>
   )
 }
 

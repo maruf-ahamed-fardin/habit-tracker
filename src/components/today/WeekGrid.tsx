@@ -68,7 +68,7 @@ export function WeekGrid() {
               return (
                 <tr key={h.id} className="border-b last:border-b-0">
                   <th scope="row" className="max-w-0 py-2 pl-3 text-left font-normal sm:w-[40%]">
-                    <Link href={`/habits/${h.id}`} className="flex min-w-0 items-center gap-2 rounded-md outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
+                    <Link href={`/habits/${h.id}`} transitionTypes={['nav-forward']} className="flex min-w-0 items-center gap-2 rounded-md outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50">
                       <span className="text-lg leading-none" aria-hidden="true">
                         {h.emoji}
                       </span>

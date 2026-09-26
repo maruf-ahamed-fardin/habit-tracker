@@ -10,7 +10,8 @@ import { Logo } from '@/components/ui/Logo'
 import { useAppStore } from '@/store/useAppStore'
 import { useLevel } from '@/hooks/useStats'
 import { cn } from '@/lib/utils'
-import { NAV_ITEMS, isActive } from './nav'
+import { NAV_ITEMS, isActive, navType } from './nav'
+import { springSoft } from '@/lib/motion'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -47,6 +48,7 @@ export function Sidebar() {
             <Link
               key={href}
               href={href}
+              transitionTypes={navType(pathname, href)}
               aria-current={active ? 'page' : undefined}
               className={cn(
                 'relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm font-medium outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50',
@@ -57,7 +59,7 @@ export function Sidebar() {
                 <motion.span
                   layoutId="sidebar-active"
                   className="absolute inset-0 rounded-xl bg-sidebar-accent"
-                  transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                  transition={springSoft}
                 />
               )}
               <Icon className={cn('relative size-[18px]', active && 'text-primary')} />

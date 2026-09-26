@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { DataProvider } from '@/components/providers/DataProvider'
 import { PWARegister } from '@/components/providers/PWARegister'
+import { MotionProvider } from '@/components/providers/MotionProvider'
 import { AppShell } from '@/components/layout/AppShell'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'
@@ -59,13 +60,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={cn(geist.variable, geistMono.variable, bricolage.variable)}>
       <body>
         <ThemeProvider>
-          <TooltipProvider delayDuration={200}>
-            <DataProvider>
-              <AppShell>{children}</AppShell>
-            </DataProvider>
-            <PWARegister />
-            <Toaster position="top-center" closeButton={false} />
-          </TooltipProvider>
+          <MotionProvider>
+            <TooltipProvider delayDuration={200}>
+              <DataProvider>
+                <AppShell>{children}</AppShell>
+              </DataProvider>
+              <PWARegister />
+              <Toaster position="top-center" closeButton={false} />
+            </TooltipProvider>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

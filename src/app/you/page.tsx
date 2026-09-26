@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import { format } from 'date-fns'
 import { Download, Keyboard, Monitor, Moon, Smartphone, Sun, Trash2, Volume2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Page, PageHeader, DataGate } from '@/components/layout/Page'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { CountUp } from '@/components/ui/CountUp'
 import { Switch } from '@/components/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -27,6 +28,8 @@ import { useLevel } from '@/hooks/useStats'
 import { ACHIEVEMENTS } from '@/lib/achievements'
 import { XP_PER_CHECK, XP_PER_HABIT, XP_PER_PERFECT_DAY } from '@/lib/insights'
 import { sound } from '@/lib/sound'
+import { switchTheme } from '@/lib/theme'
+import { easeOut, itemVariants, listVariants, springSnappy } from '@/lib/motion'
 import { cn } from '@/lib/utils'
 
 export default function YouPage() {
@@ -34,11 +37,11 @@ export default function YouPage() {
     <Page className="max-w-3xl">
       <PageHeader title="You" />
       <DataGate>
-        <div className="grid gap-6">
+        <motion.div variants={listVariants} initial="hidden" animate="show" className="grid gap-6">
           <LevelCard />
           <Achievements />
           <Settings />
-        </div>
+        </motion.div>
       </DataGate>
     </Page>
   )
@@ -47,24 +50,43 @@ export default function YouPage() {
 function LevelCard() {
   const { level, xp, progress, nextLevelXP, toNext } = useLevel()
   return (
-    <section className="grid gap-3 rounded-3xl border bg-card p-5">
+    <motion.section
+      variants={itemVariants}
+      className="hero-sheen relative grid gap-3 overflow-hidden rounded-3xl border bg-card bg-[radial-gradient(120%_120%_at_100%_0%,color-mix(in_oklab,var(--primary)_12%,var(--card))_0%,var(--card)_60%)] p-5"
+    >
       <div className="flex items-end justify-between gap-3">
         <div>
           <p className="text-xs text-muted-foreground">Level</p>
-          <p className="font-display text-5xl leading-none font-bold tabular-nums">{level}</p>
+          <p className="font-display text-5xl leading-none font-bold tabular-nums">
+            <CountUp value={level} duration={0.9} />
+          </p>
         </div>
         <p className="text-right text-sm text-muted-foreground">
-          <b className="font-semibold text-foreground tabular-nums">{xp.toLocaleString()}</b> XP
+          <CountUp value={xp} duration={1} format={n => Math.round(n).toLocaleString()} className="font-semibold text-foreground tabular-nums" /> XP
           <br />
           {toNext > 0 ? `${toNext.toLocaleString()} to level ${level + 1}` : 'Top level reached'}
         </p>
       </div>
-      <Progress value={progress * 100} className="h-2" aria-label={`Progress to level ${level + 1}`} />
+      <div
+        role="progressbar"
+        aria-label={`Progress to level ${level + 1}`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(progress * 100)}
+        className="relative h-2 overflow-hidden rounded-full bg-muted"
+      >
+        <motion.div
+          className="absolute inset-y-0 left-0 rounded-full bg-primary"
+          initial={{ width: 0 }}
+          animate={{ width: `${progress * 100}%` }}
+          transition={{ duration: 1, ease: easeOut, delay: 0.2 }}
+        />
+      </div>
       <p className="text-xs text-muted-foreground">
         +{XP_PER_CHECK} per check-in · +{XP_PER_PERFECT_DAY} per perfect day · +{XP_PER_HABIT} per habit · bonus XP from achievements
       </p>
       <p className="sr-only">Next level at {nextLevelXP} XP</p>
-    </section>
+    </motion.section>
   )
 }
 
@@ -81,30 +103,33 @@ function Achievements() {
   const list = [...ACHIEVEMENTS].sort((a, b) => Number(unlocked.has(b.key)) - Number(unlocked.has(a.key)))
 
   return (
-    <section className="grid gap-3">
+    <motion.section variants={itemVariants} className="grid gap-3">
       <header className="flex items-baseline justify-between px-1">
         <h2 className="text-sm font-semibold">Achievements</h2>
         <span className="text-xs text-muted-foreground tabular-nums">
           {unlocked.size} of {ACHIEVEMENTS.length}
         </span>
       </header>
-      <ul className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
+      <motion.ul variants={listVariants} className="grid grid-cols-4 gap-2.5 sm:grid-cols-5">
         {list.map(a => {
           const got = unlocked.has(a.key)
           return (
-            <li key={a.key}>
+            <motion.li key={a.key} variants={itemVariants} style={{ perspective: 600 }}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button
+                  <motion.button
                     type="button"
                     aria-label={`${a.title}: ${a.description}${got ? ' (unlocked)' : ' (locked)'}`}
+                    whileHover={got ? { scale: 1.08, rotateY: 12 } : { scale: 1.03 }}
+                    whileTap={{ scale: 0.94 }}
+                    transition={springSnappy}
                     className={cn(
-                      'grid aspect-square w-full place-items-center rounded-2xl border bg-card text-2xl outline-none transition-transform hover:scale-105 focus-visible:ring-3 focus-visible:ring-ring/50 sm:text-3xl',
-                      got ? cn('ring-2', TIER_RING[a.tier]) : 'opacity-35 grayscale'
+                      'relative grid aspect-square w-full place-items-center overflow-hidden rounded-2xl border bg-card text-2xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:text-3xl',
+                      got ? cn('shine ring-2', TIER_RING[a.tier]) : 'opacity-35 grayscale blur-[0.6px]'
                     )}
                   >
                     {a.icon}
-                  </button>
+                  </motion.button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-56 text-center">
                   <b>{a.title}</b>
@@ -113,11 +138,11 @@ function Achievements() {
                   {a.xpReward > 0 && ` · +${a.xpReward} XP`}
                 </TooltipContent>
               </Tooltip>
-            </li>
+            </motion.li>
           )
         })}
-      </ul>
-    </section>
+      </motion.ul>
+    </motion.section>
   )
 }
 
@@ -129,6 +154,7 @@ const isStandalone = () =>
 // read browser-only settings directly.
 function Settings() {
   const { theme = 'system', setTheme } = useTheme()
+  const lastPointer = useRef<{ x: number; y: number } | undefined>(undefined)
   const [soundOn, setSoundOn] = useState(() => sound.enabled)
   const [installed, setInstalled] = useState(isStandalone)
   const habits = useAppStore(s => s.habits)
@@ -179,11 +205,21 @@ function Settings() {
   }
 
   return (
-    <section className="grid gap-3">
+    <motion.section variants={itemVariants} className="grid gap-3">
       <h2 className="px-1 text-sm font-semibold">Settings</h2>
       <div className="divide-y overflow-hidden rounded-3xl border bg-card">
         <Row icon={<Monitor />} title="Appearance" description="Light, dark, or match device">
-          <ToggleGroup type="single" variant="outline" size="sm" value={theme} onValueChange={v => v && setTheme(v)} aria-label="Theme">
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            value={theme}
+            onValueChange={v => v && switchTheme(setTheme, v, lastPointer.current)}
+            onPointerDown={e => {
+              lastPointer.current = { x: e.clientX, y: e.clientY }
+            }}
+            aria-label="Theme"
+          >
             <ToggleGroupItem value="light" aria-label="Light" className="data-[state=on]:bg-accent">
               <Sun />
             </ToggleGroupItem>
@@ -255,7 +291,7 @@ function Settings() {
           </AlertDialog>
         </Row>
       </div>
-    </section>
+    </motion.section>
   )
 }
 

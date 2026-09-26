@@ -180,23 +180,207 @@
   }
 }
 
-/* Habit card: colour sweeps in from the left when checked. */
+/* ---------------------------------------------------------------------------
+   Motion
+   Durations and the ease curve match src/lib/motion.ts so CSS and Framer
+   animations feel like one material.
+--------------------------------------------------------------------------- */
+:root {
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 180ms;
+  --dur-base: 300ms;
+  --dur-slow: 550ms;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* First paint of a page, and content replacing a skeleton. After the first
+   client-side navigation (<body data-navigated>) the view transition takes over. */
+body:not([data-navigated]) .page-enter {
+  animation: rise-in var(--dur-slow) var(--ease-out) both;
+}
+body:not([data-navigated]) .content-enter {
+  animation: rise-in var(--dur-base) var(--ease-out) both;
+}
+
+/* Route changes: content slides left going deeper, right coming back. The
+   sidebar and tab bar live in the layout so they stay put. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.nav-forward),
+::view-transition-old(.nav-back) {
+  animation:
+    var(--dur-fast) ease-in both fade-in reverse,
+    400ms var(--ease-out) both vt-slide reverse;
+}
+::view-transition-new(.nav-forward),
+::view-transition-new(.nav-back) {
+  animation:
+    210ms ease-out var(--dur-fast) both fade-in,
+    400ms var(--ease-out) both vt-slide;
+}
+::view-transition-old(.nav-forward) {
+  --slide-offset: -40px;
+}
+::view-transition-new(.nav-forward) {
+  --slide-offset: 40px;
+}
+::view-transition-old(.nav-back) {
+  --slide-offset: 40px;
+}
+::view-transition-new(.nav-back) {
+  --slide-offset: -40px;
+}
+::view-transition-new(.page-fade) {
+  animation: var(--dur-base) var(--ease-out) both rise-in;
+}
+@keyframes vt-slide {
+  from {
+    translate: var(--slide-offset) 0;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+/* Habit emoji tile morphs from the list into the detail page header. */
+::view-transition-group(.morph) {
+  animation-duration: 380ms;
+  animation-timing-function: var(--ease-out);
+}
+::view-transition-image-pair(.morph) {
+  animation-name: via-blur;
+}
+@keyframes via-blur {
+  30% {
+    filter: blur(2px);
+  }
+}
+
+/* Theme switch: the new colours grow out from the toggle in a circle. */
+html.theme-switching::view-transition-old(root) {
+  animation: none;
+  z-index: 0;
+}
+html.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 520ms var(--ease-out) both;
+  z-index: 1;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--theme-r, 150vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
+/* Command menu results ripple in. */
+[cmdk-item] {
+  animation: rise-in var(--dur-base) var(--ease-out) both;
+}
+[cmdk-group-items] > [cmdk-item]:nth-child(2) { animation-delay: 30ms; }
+[cmdk-group-items] > [cmdk-item]:nth-child(3) { animation-delay: 60ms; }
+[cmdk-group-items] > [cmdk-item]:nth-child(4) { animation-delay: 90ms; }
+[cmdk-group-items] > [cmdk-item]:nth-child(n + 5) { animation-delay: 120ms; }
+
+/* Heatmap squares fade in column by column (delay set inline). */
+.heat-cell {
+  animation: fade-in var(--dur-base) ease-out both;
+}
+
+/* Unlocked achievement: a light sweep across the tile. */
+@keyframes shine {
+  from {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(230%) skewX(-18deg);
+  }
+}
+.shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  transform: translateX(-130%) skewX(-18deg);
+}
+.shine:hover::after,
+.shine[data-new]::after {
+  animation: shine 0.9s ease-out both;
+}
+
+/* Habit card: the colour blooms out from where the finger landed. */
 .habit-fill {
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+  transition: clip-path var(--dur-slow) var(--ease-out);
 }
 [data-checked='true'] > .habit-fill {
-  transform: scaleX(1);
+  clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
 }
 
 .check-draw {
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
-  transition: stroke-dashoffset 0.3s 0.08s ease;
+  transition: stroke-dashoffset var(--dur-base) 0.1s var(--ease-out);
 }
 [data-checked='true'] .check-draw {
   stroke-dashoffset: 0;
+}
+
+/* Soft pulse ring that expands from a check that just landed. */
+@keyframes check-pulse {
+  from {
+    opacity: 0.55;
+    scale: 0.6;
+  }
+  to {
+    opacity: 0;
+    scale: 2.1;
+  }
+}
+.check-pulse {
+  animation: check-pulse 0.7s var(--ease-out) both;
+}
+
+/* Hero card gets a slow, barely-there sheen so the page feels alive. */
+@keyframes sheen {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+.hero-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, color-mix(in oklab, var(--primary) 9%, transparent) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: sheen 9s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -204,6 +388,13 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
   }
 }

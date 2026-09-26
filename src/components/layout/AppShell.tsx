@@ -8,6 +8,8 @@ import { Sidebar } from './Sidebar'
 import { TabBar } from './TabBar'
 import { CommandMenu } from './CommandMenu'
 import { ShortcutsDialog } from './ShortcutsDialog'
+import { NavigationWatcher } from './Page'
+import { LevelUp } from './LevelUp'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -19,6 +21,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <CommandMenu />
       <ShortcutsDialog />
       <GlobalShortcuts />
+      <NavigationWatcher />
+      <LevelUp />
     </>
   )
 }
