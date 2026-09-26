@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, LabelList, XAxis, YAxis } from 'recharts'
 import { format } from 'date-fns'
 import { ChartContainer, ChartTooltip, type ChartConfig } from '@/components/ui/chart'
@@ -140,9 +141,12 @@ export function HabitRates({ rates }: { rates: HabitRate[] }) {
           <span className="row-span-2 text-right font-semibold tabular-nums">{pct}%</span>
           <span className="flex items-center gap-2">
             <span className="h-2 flex-1 overflow-hidden rounded-r-[4px] bg-muted">
-              <span
-                className="block h-full rounded-r-[4px] transition-[width] duration-700 ease-out"
-                style={{ width: `${pct}%`, background: habitColor(habit.color) }}
+              <motion.span
+                className="block h-full rounded-r-[4px]"
+                style={{ background: habitColor(habit.color) }}
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 0.8, ease: [0.2, 0.8, 0.2, 1], delay: 0.15 }}
               />
             </span>
             <span className="w-14 text-right text-[11px] text-muted-foreground tabular-nums">
@@ -165,7 +169,7 @@ export function Heatmap({ columns, today }: { columns: HeatCell[][]; today: stri
     <div className="grid gap-3">
       <div className="overflow-x-auto pb-1">
         <div className="grid w-fit auto-cols-min grid-flow-col grid-rows-7 gap-[3px]">
-          {columns.flat().map(cell =>
+          {columns.flat().map((cell, i) =>
             cell.level < 0 ? (
               <span
                 key={cell.date}
@@ -178,8 +182,8 @@ export function Heatmap({ columns, today }: { columns: HeatCell[][]; today: stri
                   <span
                     tabIndex={0}
                     aria-label={`${format(fromKey(cell.date), 'EEE MMM d')}: ${cell.done} of ${cell.total} habits`}
-                    className={cn('size-[14px] rounded-[4px] outline-none focus-visible:ring-2 focus-visible:ring-ring sm:size-4')}
-                    style={{ background: levelColor(cell.level) }}
+                    className={cn('heat-cell size-[14px] rounded-[4px] outline-none transition-transform hover:scale-125 focus-visible:ring-2 focus-visible:ring-ring sm:size-4')}
+                    style={{ background: levelColor(cell.level), animationDelay: `${Math.floor(i / 7) * 18}ms` }}
                   />
                 </TooltipTrigger>
                 <TooltipContent>

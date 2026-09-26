@@ -1,9 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { Page, PageHeader, DataGate } from '@/components/layout/Page'
 import { Button } from '@/components/ui/button'
+import { CountUp } from '@/components/ui/CountUp'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { HabitRates, Heatmap, TrendChart, WeekdayChart } from '@/components/insights/Charts'
@@ -21,6 +23,7 @@ import {
   weekProgress,
 } from '@/lib/insights'
 import { lastNDays, shiftKey } from '@/lib/dateUtils'
+import { itemVariants, listVariants } from '@/lib/motion'
 
 const RANGES = [
   { value: '7', label: '7 days' },
@@ -102,20 +105,42 @@ function InsightsContent({ range }: { range: number }) {
 
   if (habits.length === 0) {
     return (
-      <section className="grid justify-items-center gap-3 rounded-3xl border bg-card px-6 py-14 text-center">
-        <h2 className="font-display text-2xl font-bold">Nothing to chart yet</h2>
-        <p className="max-w-sm text-sm text-muted-foreground">Add a habit and check it off for a few days. Your trends, best days and streaks will show up here.</p>
-        <Button className="mt-2 h-10 rounded-xl" onClick={() => openSheet()}>
-          <Plus />
-          Add a habit
-        </Button>
-      </section>
+      <motion.section
+        variants={listVariants}
+        initial="hidden"
+        animate="show"
+        className="grid justify-items-center gap-3 rounded-3xl border bg-card px-6 py-14 text-center"
+      >
+        <motion.div variants={itemVariants} aria-hidden="true" className="flex h-12 items-end gap-1.5">
+          {[0.35, 0.6, 0.45, 0.8, 1].map((h, i) => (
+            <motion.span
+              key={i}
+              className="w-3 rounded-t-[3px] bg-primary/70"
+              initial={{ height: 0 }}
+              animate={{ height: `${h * 100}%` }}
+              transition={{ delay: 0.3 + i * 0.08, duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+            />
+          ))}
+        </motion.div>
+        <motion.h2 variants={itemVariants} className="font-display text-2xl font-bold">
+          Nothing to chart yet
+        </motion.h2>
+        <motion.p variants={itemVariants} className="max-w-sm text-sm text-muted-foreground">
+          Add a habit and check it off for a few days. Your trends, best days and streaks will show up here.
+        </motion.p>
+        <motion.div variants={itemVariants} whileTap={{ scale: 0.97 }}>
+          <Button className="mt-2 h-10 rounded-xl" onClick={() => openSheet()}>
+            <Plus />
+            Add a habit
+          </Button>
+        </motion.div>
+      </motion.section>
     )
   }
 
   return (
-    <div className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <motion.div key={range} variants={listVariants} initial="hidden" animate="show" className="grid gap-4">
+      <motion.div variants={listVariants} className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Tile label="This week" value={stats.week ?? 0} suffix="%" delta={stats.weekDelta} deltaNote="vs same point last week" hint="of weekly goals reached" />
         <Tile label="Completion" value={stats.completion ?? 0} suffix="%" delta={stats.completionDelta} deltaNote={`vs previous ${range} days`} hint={`average over ${range} days`} />
         <Tile
@@ -130,7 +155,7 @@ function InsightsContent({ range }: { range: number }) {
           suffix={`/ ${range}`}
           hint={`${stats.checkins.toLocaleString()} check-ins${stats.prevCheckins ? ` (${stats.checkins >= stats.prevCheckins ? '+' : '−'}${Math.abs(stats.checkins - stats.prevCheckins)})` : ''}`}
         />
-      </div>
+      </motion.div>
 
       <Card title="Completion trend" subtitle={range > 7 ? 'Share of habits done each day, 7-day average' : 'Share of habits done each day'}>
         <TrendChart series={stats.series} smooth={range > 7 ? 7 : 1} />
@@ -155,7 +180,7 @@ function InsightsContent({ range }: { range: number }) {
       <Card title="Last 12 weeks" subtitle="Each square is a day. Darker means more habits done.">
         <Heatmap columns={stats.heat} today={today} />
       </Card>
-    </div>
+    </motion.div>
   )
 }
 
@@ -175,10 +200,10 @@ function Tile({
   hint?: string
 }) {
   return (
-    <div className="grid content-start gap-1 rounded-2xl border bg-card p-4">
+    <motion.div variants={itemVariants} className="grid content-start gap-1 rounded-2xl border bg-card p-4">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span className="flex items-baseline gap-1">
-        <span className="text-3xl font-semibold tracking-tight tabular-nums">{value.toLocaleString()}</span>
+        <CountUp value={value} format={n => Math.round(n).toLocaleString()} className="text-3xl font-semibold tracking-tight tabular-nums" />
         {suffix && <span className="text-sm text-muted-foreground">{suffix}</span>}
       </span>
       {delta !== undefined && delta !== null ? (
@@ -191,19 +216,19 @@ function Tile({
       ) : (
         hint && <span className="truncate text-xs text-muted-foreground">{hint}</span>
       )}
-    </div>
+    </motion.div>
   )
 }
 
 function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <section className="grid content-start gap-4 rounded-3xl border bg-card p-4 sm:p-5">
+    <motion.section variants={itemVariants} className="grid content-start gap-4 rounded-3xl border bg-card p-4 sm:p-5">
       <header className="grid gap-0.5">
         <h2 className="text-sm font-semibold">{title}</h2>
         {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
       </header>
       {children}
-    </section>
+    </motion.section>
   )
 }
 
