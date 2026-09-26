@@ -1,8 +1,9 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { ViewTransition, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
+import { AnimatePresence, motion } from 'framer-motion'
 import { addMonths, endOfMonth, format, startOfMonth, subMonths } from 'date-fns'
 import { ArrowLeft, Bell, Check, ChevronLeft, ChevronRight, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
@@ -16,6 +17,7 @@ import { datesOf, habitRates, streakFor } from '@/lib/insights'
 import { dayKey, fromKey, shiftKey, weekKeys } from '@/lib/dateUtils'
 import { habitColor } from '@/lib/colors'
 import { formatStreak } from '@/lib/streak'
+import { itemVariants, listVariants, springSnappy } from '@/lib/motion'
 import { cn, frequencyLabel } from '@/lib/utils'
 
 export default function HabitDetailPage() {
@@ -24,9 +26,10 @@ export default function HabitDetailPage() {
     <Page className="max-w-3xl">
       <Link
         href="/habits"
-        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+        transitionTypes={['nav-back']}
+        className="group mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
       >
-        <ArrowLeft className="size-4" />
+        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
         Habits
       </Link>
       <DataGate>
@@ -60,11 +63,13 @@ function HabitDetail({ id }: { id: string }) {
   const color = habitColor(habit.color)
 
   return (
-    <div className="grid gap-5" style={{ '--c': color } as React.CSSProperties}>
-      <header className="flex items-center gap-4">
-        <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-2xl bg-[color-mix(in_oklab,var(--c)_15%,var(--card))] text-4xl">
-          {habit.emoji}
-        </span>
+    <motion.div variants={listVariants} initial="hidden" animate="show" className="grid gap-5" style={{ '--c': color } as React.CSSProperties}>
+      <motion.header variants={itemVariants} className="flex items-center gap-4">
+        <ViewTransition name={`habit-${habit.id}`} share="morph" default="none">
+          <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-2xl bg-[color-mix(in_oklab,var(--c)_15%,var(--card))] text-4xl">
+            {habit.emoji}
+          </span>
+        </ViewTransition>
         <div className="min-w-0 flex-1">
           <h1 className="font-display text-2xl leading-tight font-bold sm:text-3xl">{habit.name}</h1>
           <p className="mt-1 flex flex-wrap items-center gap-x-3 text-sm text-muted-foreground">
@@ -81,30 +86,46 @@ function HabitDetail({ id }: { id: string }) {
           <Pencil />
           <span className="hidden sm:inline">Edit</span>
         </Button>
-      </header>
+      </motion.header>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Stat label="Current streak" value={formatStreak(streak.current, streak.unit)} />
+      <motion.div variants={listVariants} className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Stat label="Current streak" value={formatStreak(streak.current, streak.unit)} highlight={streak.current > 0} />
         <Stat label="Best streak" value={formatStreak(streak.best, streak.unit)} />
         <Stat label="Last 30 days" value={`${rate30}%`} note="of goal" />
         <Stat label="All-time" value={total.toLocaleString()} note={total === 1 ? 'check-in' : 'check-ins'} />
-      </div>
+      </motion.div>
 
-      <MonthCalendar habit={habit} />
-      <Notes habit={habit} />
-    </div>
+      <motion.div variants={itemVariants}>
+        <MonthCalendar habit={habit} />
+      </motion.div>
+      <motion.div variants={itemVariants}>
+        <Notes habit={habit} />
+      </motion.div>
+    </motion.div>
   )
 }
 
-function Stat({ label, value, note }: { label: string; value: string; note?: string }) {
+function Stat({ label, value, note, highlight }: { label: string; value: string; note?: string; highlight?: boolean }) {
   return (
-    <div className="grid gap-1 rounded-2xl border bg-card p-4">
+    <motion.div
+      variants={itemVariants}
+      className={cn('grid gap-1 overflow-hidden rounded-2xl border bg-card p-4', highlight && 'border-[color-mix(in_oklab,var(--c)_35%,var(--border))]')}
+    >
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="text-xl font-semibold tabular-nums">
-        {value}
-        {note && <span className="ml-1 text-xs font-normal text-muted-foreground">{note}</span>}
-      </span>
-    </div>
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.span
+          key={value}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={springSnappy}
+          className="text-xl font-semibold tabular-nums"
+        >
+          {value}
+          {note && <span className="ml-1 text-xs font-normal text-muted-foreground">{note}</span>}
+        </motion.span>
+      </AnimatePresence>
+    </motion.div>
   )
 }
 
@@ -151,31 +172,45 @@ function MonthCalendar({ habit }: { habit: Habit }) {
             {format(fromKey(d), 'EEEEE')}
           </span>
         ))}
-        {cells.map(d => {
-          const inMonth = d.slice(0, 7) === monthKey
-          const done = dates.has(d)
-          const future = d > today
-          return (
-            <button
-              key={d}
-              type="button"
-              role="checkbox"
-              aria-checked={done}
-              aria-label={format(fromKey(d), 'EEEE, MMMM d')}
-              disabled={future}
-              onClick={() => checkIn(habit, d, { quiet: true })}
-              className={cn(
-                'relative mx-auto grid aspect-square w-full max-w-11 place-items-center rounded-xl text-sm tabular-nums outline-none transition-all active:scale-90 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-35',
-                done ? 'bg-[var(--c)] font-semibold text-white' : 'hover:bg-muted',
-                !inMonth && !done && 'text-muted-foreground/50',
-                d === today && !done && 'ring-2 ring-[var(--c)]'
-              )}
-            >
-              {done ? <Check className="size-4" strokeWidth={3} aria-hidden="true" /> : fromKey(d).getDate()}
-            </button>
-          )
-        })}
       </div>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={monthKey}
+          initial={{ opacity: 0, x: 12 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -12 }}
+          transition={{ duration: 0.22, ease: 'easeOut' }}
+          className="-mt-2 grid grid-cols-7 gap-1.5 text-center"
+        >
+          {cells.map(d => {
+            const inMonth = d.slice(0, 7) === monthKey
+            const done = dates.has(d)
+            const future = d > today
+            return (
+              <motion.button
+                key={d}
+                type="button"
+                role="checkbox"
+                aria-checked={done}
+                aria-label={format(fromKey(d), 'EEEE, MMMM d')}
+                disabled={future}
+                onClick={() => checkIn(habit, d, { quiet: true })}
+                whileTap={future ? undefined : { scale: 0.82 }}
+                animate={done ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+                className={cn(
+                  'relative mx-auto grid aspect-square w-full max-w-11 place-items-center rounded-xl text-sm tabular-nums outline-none transition-colors duration-300 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-35',
+                  done ? 'bg-[var(--c)] font-semibold text-white' : 'hover:bg-muted',
+                  !inMonth && !done && 'text-muted-foreground/50',
+                  d === today && !done && 'ring-2 ring-[var(--c)]'
+                )}
+              >
+                {done ? <Check className="size-4" strokeWidth={3} aria-hidden="true" /> : fromKey(d).getDate()}
+              </motion.button>
+            )
+          })}
+        </motion.div>
+      </AnimatePresence>
     </section>
   )
 }
@@ -216,14 +251,14 @@ function Notes({ habit }: { habit: Habit }) {
         {todayNote ? 'Update note' : 'Save note'}
       </Button>
       {past.length > 0 && (
-        <ul className="mt-2 grid gap-3 border-t pt-4">
+        <motion.ul variants={listVariants} initial="hidden" animate="show" className="mt-2 grid gap-3 border-t pt-4">
           {past.map(n => (
-            <li key={n.id} className="grid gap-0.5 text-sm">
+            <motion.li key={n.id} variants={itemVariants} className="grid gap-0.5 text-sm">
               <span className="text-xs text-muted-foreground">{format(fromKey(n.date), 'EEE, MMM d')}</span>
               <span>{n.content}</span>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       )}
     </section>
   )

@@ -1,7 +1,8 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { ViewTransition, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import { ChevronRight, Flame, GripVertical, Plus, Search } from 'lucide-react'
 import {
   DndContext,
@@ -23,6 +24,7 @@ import { useCheckIndex } from '@/hooks/useStats'
 import { habitRates, streakFor, type CheckIndex } from '@/lib/insights'
 import { habitColor } from '@/lib/colors'
 import { formatStreak } from '@/lib/streak'
+import { itemVariants, listVariants } from '@/lib/motion'
 import { cn, frequencyLabel } from '@/lib/utils'
 
 export default function HabitsPage() {
@@ -32,7 +34,7 @@ export default function HabitsPage() {
   return (
     <Page>
       <PageHeader
-        eyebrow={isLoading ? ' ' : `${count} ${count === 1 ? 'habit' : 'habits'}`}
+        eyebrow={isLoading ? ' ' : `${count} ${count === 1 ? 'habit' : 'habits'}`}
         title="Habits"
         actions={
           <Button onClick={() => openSheet()} className="hidden h-9 rounded-xl sm:inline-flex">
@@ -65,14 +67,34 @@ function HabitsList() {
 
   if (habits.length === 0) {
     return (
-      <section className="grid justify-items-center gap-3 rounded-3xl border bg-card px-6 py-14 text-center">
-        <h2 className="font-display text-2xl font-bold">No habits yet</h2>
-        <p className="max-w-sm text-sm text-muted-foreground">Create one to get started. You can add more any time with the + button.</p>
-        <Button className="mt-2 h-10 rounded-xl" onClick={() => openSheet()}>
-          <Plus />
-          New habit
-        </Button>
-      </section>
+      <motion.section
+        variants={listVariants}
+        initial="hidden"
+        animate="show"
+        className="grid justify-items-center gap-3 rounded-3xl border bg-card px-6 py-14 text-center"
+      >
+        <motion.span
+          variants={itemVariants}
+          aria-hidden="true"
+          className="grid size-16 place-items-center rounded-2xl bg-muted text-3xl"
+          animate={{ rotate: [0, -6, 6, 0] }}
+          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut' }}
+        >
+          📋
+        </motion.span>
+        <motion.h2 variants={itemVariants} className="font-display text-2xl font-bold">
+          No habits yet
+        </motion.h2>
+        <motion.p variants={itemVariants} className="max-w-sm text-sm text-muted-foreground">
+          Create one to get started. You can add more any time with the + button.
+        </motion.p>
+        <motion.div variants={itemVariants} whileTap={{ scale: 0.97 }}>
+          <Button className="mt-2 h-10 rounded-xl" onClick={() => openSheet()}>
+            <Plus />
+            New habit
+          </Button>
+        </motion.div>
+      </motion.section>
     )
   }
 
@@ -101,11 +123,11 @@ function HabitsList() {
       )}
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
         <SortableContext items={filtered.map(h => h.id)} strategy={verticalListSortingStrategy}>
-          <ul className="grid gap-2.5">
+          <motion.ul variants={listVariants} initial="hidden" animate="show" className="grid gap-2.5">
             {filtered.map(h => (
               <HabitRow key={h.id} habit={h} idx={idx} today={today} rate={rates.get(h.id) ?? 0} draggable={canDrag} />
             ))}
-          </ul>
+          </motion.ul>
         </SortableContext>
       </DndContext>
       {filtered.length === 0 && <p className="py-8 text-center text-sm text-muted-foreground">No habits match “{query}”.</p>}
@@ -128,46 +150,65 @@ function HabitRow({ habit, idx, today, rate, draggable }: { habit: Habit; idx: C
     <li
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition, '--c': color } as React.CSSProperties}
-      className={cn('relative flex items-center gap-1 rounded-2xl border bg-card pr-2', isDragging && 'z-10 shadow-lg')}
+      className={cn('relative', isDragging && 'z-10')}
     >
-      {draggable && (
-        <button
-          ref={setActivatorNodeRef}
-          type="button"
-          aria-label={`Reorder ${habit.name}`}
-          className="grid h-full w-8 shrink-0 cursor-grab touch-none place-items-center self-stretch rounded-l-2xl text-muted-foreground outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:cursor-grabbing"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVertical className="size-4" />
-        </button>
-      )}
-      <Link
-        href={`/habits/${habit.id}`}
-        className={cn('flex min-w-0 flex-1 items-center gap-3 rounded-xl py-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50', !draggable && 'pl-3')}
+      <motion.div
+        variants={itemVariants}
+        animate={isDragging ? { scale: 1.025, boxShadow: '0 18px 40px -16px rgb(0 0 0 / 0.35)' } : { scale: 1, boxShadow: '0 0 0 0 rgb(0 0 0 / 0)' }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        className={cn(
+          'flex items-center gap-1 rounded-2xl border bg-card pr-2 transition-[border-color,background-color] duration-300',
+          isDragging && 'border-[color-mix(in_oklab,var(--c)_40%,var(--border))] bg-[color-mix(in_oklab,var(--c)_6%,var(--card))]'
+        )}
       >
-        <span aria-hidden="true" className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[color-mix(in_oklab,var(--c)_14%,var(--card))] text-[22px]">
-          {habit.emoji}
-        </span>
-        <span className="grid min-w-0 flex-1 gap-1">
-          <span className="truncate text-[15px] font-semibold">{habit.name}</span>
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-            <span>{frequencyLabel(habit.weeklyGoal)}</span>
-            <span aria-hidden="true">·</span>
-            <span className="tabular-nums">{rate}% last 30 days</span>
-            {streak.current > 0 && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span className="inline-flex items-center gap-0.5 font-medium text-foreground">
-                  <Flame className="size-3.5 fill-flame text-flame" aria-hidden="true" />
-                  {formatStreak(streak.current, streak.unit, true)}
-                </span>
-              </>
-            )}
+        {draggable && (
+          <button
+            ref={setActivatorNodeRef}
+            type="button"
+            aria-label={`Reorder ${habit.name}`}
+            className="grid h-full w-8 shrink-0 cursor-grab touch-none place-items-center self-stretch rounded-l-2xl text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 active:cursor-grabbing"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="size-4" />
+          </button>
+        )}
+        <Link
+          href={`/habits/${habit.id}`}
+          transitionTypes={['nav-forward']}
+          className={cn(
+            'group flex min-w-0 flex-1 items-center gap-3 rounded-xl py-3 outline-none focus-visible:ring-3 focus-visible:ring-ring/50',
+            !draggable && 'pl-3'
+          )}
+        >
+          <ViewTransition name={`habit-${habit.id}`} share="morph" default="none">
+            <span
+              aria-hidden="true"
+              className="grid size-11 shrink-0 place-items-center rounded-[13px] bg-[color-mix(in_oklab,var(--c)_14%,var(--card))] text-[22px] transition-transform duration-300 group-hover:scale-105"
+            >
+              {habit.emoji}
+            </span>
+          </ViewTransition>
+          <span className="grid min-w-0 flex-1 gap-1">
+            <span className="truncate text-[15px] font-semibold">{habit.name}</span>
+            <span className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+              <span>{frequencyLabel(habit.weeklyGoal)}</span>
+              <span aria-hidden="true">·</span>
+              <span className="tabular-nums">{rate}% last 30 days</span>
+              {streak.current > 0 && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span className="inline-flex items-center gap-0.5 font-medium text-foreground">
+                    <Flame className="size-3.5 fill-flame text-flame" aria-hidden="true" />
+                    {formatStreak(streak.current, streak.unit, true)}
+                  </span>
+                </>
+              )}
+            </span>
           </span>
-        </span>
-        <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
-      </Link>
+          <ChevronRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </motion.div>
     </li>
   )
 }
