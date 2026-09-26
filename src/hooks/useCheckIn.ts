@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { useAppStore, type Habit } from '@/store/useAppStore'
 import { celebrate } from '@/lib/confetti'
 import { sound } from '@/lib/sound'
+import { haptic } from '@/lib/motion'
 import { XP_PER_PERFECT_DAY } from '@/lib/insights'
 
 function celebrateOnce(day: string) {
@@ -34,16 +35,19 @@ export function useCheckIn() {
       const result = toggleCheck(habit.id, day)
       if (had) {
         sound.playUncheck()
+        haptic(6)
         return result
       }
 
       sound.playCheck()
+      haptic(12)
       const after = useAppStore.getState()
       const doneToday = after.habits.filter(h => after.checks.some(c => c.habitId === h.id && c.date === day)).length
       const isToday = day === after.today
 
       if (isToday && doneToday === after.habits.length && celebrateOnce(day)) {
         sound.playFanfare()
+        haptic([20, 60, 30])
         celebrate()
         toast.success('Perfect day!', { description: `Every habit done. +${XP_PER_PERFECT_DAY} XP` })
       } else if (!quiet) {
