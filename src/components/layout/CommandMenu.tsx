@@ -16,6 +16,7 @@ import {
 import { useAppStore } from '@/store/useAppStore'
 import { useCheckIn } from '@/hooks/useCheckIn'
 import { NAV_ITEMS } from './nav'
+import { switchTheme } from '@/lib/theme'
 
 export function CommandMenu() {
   const router = useRouter()
@@ -78,7 +79,7 @@ export function CommandMenu() {
           </CommandItem>
           <CommandItem
             value="toggle theme dark light"
-            onSelect={() => run(() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark'))}
+            onSelect={() => run(() => switchTheme(setTheme, resolvedTheme === 'dark' ? 'light' : 'dark'))}
           >
             {resolvedTheme === 'dark' ? <Sun /> : <Moon />}
             Switch to {resolvedTheme === 'dark' ? 'light' : 'dark'} theme
