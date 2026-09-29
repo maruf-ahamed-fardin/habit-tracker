@@ -1,71 +1,149 @@
-# Roadmap (2026-09-26)
+# Habit Tracker Roadmap (2026-09-29)
 
-Status legend: ✅ done · 🔜 next · ⬜ not started
+Status legend: 🔜 next up · ⏳ in progress · ⬜ planned
 
-## Phase 1 — Motion system + Today redesign ✅ (uncommitted on `dev-branch`)
+---
 
-Done today:
-- `src/lib/motion.ts`: one place for springs, easing, durations, list stagger variants, `haptic()`.
-- `MotionProvider` (framer `reducedMotion="user"`) in `layout.tsx`.
-- Route transitions with React `<ViewTransition>` in `Page`; `navType()` in `layout/nav.ts` decides forward/back; TabBar, Sidebar and in-page links pass `transitionTypes`. CSS in `globals.css` (`.nav-forward`, `.nav-back`, `.page-fade`).
-- First-load entrance (`.page-enter`, `.content-enter`) only before the first client navigation (`<body data-navigated>` set by `NavigationWatcher`).
-- Sticky page header: blurs, shrinks title, hides eyebrow on scroll.
-- Today: time-of-day greeting, hero with gradient + slow sheen, `CountUp` numbers, message crossfade, stagger list entrance, ring arcs draw in one by one, ring pulses on perfect day.
-- HabitCard: colour blooms from the tap point (`--x/--y` + clip-path), emoji wiggle, check pop + pulse ring, week dot pop, haptics on check/uncheck/perfect day.
-- Tab bar: active icon bounce, plus button rotates on press.
+## Phase 1 — Quick Wins: Data Safety, Organization & Archiving 🔜
 
-Leftovers from phase 1:
-- Undo toast progress bar (sonner has no built-in; skip or custom toast).
-- Verify view transitions on a real phone (Safari behaves differently) and on browser back.
+### 1.1 Data Backup Import / Restore
+- **Problem**: Settings has "Export CSV" and "Export JSON", but zero way to restore data if switching devices, clearing cache, or testing reset.
+- **Implementation**:
+  - Add "Import backup (.json)" file uploader to [src/app/you/page.tsx](file:///c:/my-github/habit%20tracker/src/app/you/page.tsx).
+  - Add `/api/backup/restore` endpoint to validate JSON schema and batch upsert habits, checks, notes, and achievements.
+  - Client store reload with preview of restored counts (e.g. "Restoring 6 habits, 142 checks").
 
-## Phase 2 — Polish other pages ✅ (uncommitted on `dev-branch`)
+### 1.2 Category Organization & Filtering
+- **Schema**: `Habit.category` already exists in [prisma/schema.prisma](file:///c:/my-github/habit%20tracker/prisma/schema.prisma) (`personal`, `health`, `work`, `mind`, `finance`, `fitness`).
+- **HabitSheet**: Add visual category picker (icon + accent color badge) in [HabitSheet.tsx](file:///c:/my-github/habit%20tracker/src/components/habits/HabitSheet.tsx).
+- **Today & Habits Pages**:
+  - Filter chips at the top of Today and Habits lists (`All`, `Health`, `Work`, etc.) with animated sliding active pill (`layoutId="category-filter"`).
+- **Insights**: Category balance donut chart / breakdown showing completion rate by life domain.
 
-Done 2026-09-26:
-- Habits: stagger entrance, drag lift (scale + shadow + tinted border), emoji tile morphs into the detail page header (`<ViewTransition name="habit-{id}" share="morph">`), forward/back `transitionTypes` on list, WeekGrid and back links.
-- Habit detail: header/stats/calendar/notes stagger in, stat values roll when they change, calendar month slides on prev/next, day cells pop on tap and when done, current-streak tile highlighted.
-- Insights: tiles use `CountUp`, cards stagger, whole content crossfades when the range changes, per-habit bars grow, heatmap fades in column by column, empty state has an animated mini bar chart.
-- You: level card gradient + sheen, level and XP count up, XP bar fills, achievements stagger + 3D hover tilt + shine sweep, locked tiles grayscale/blur, theme toggle does a circular reveal from the click point (`src/lib/theme.ts`, also used by the command menu).
-- Global level-up overlay (`components/layout/LevelUp.tsx`): burst + badge flip + confetti + haptic whenever the level rises.
-- HabitSheet form sections stagger in; colour swatches scale; command menu results ripple in (CSS).
+### 1.3 Habit Archiving & Pausing (Soft Deletion)
+- **Problem**: Deleting a habit permanently cascades and destroys all historical checks, streaks, and heatmap data.
+- **Implementation**:
+  - Add `isArchived Boolean @default(false)` to `Habit` model.
+  - Allow "Archive habit" in habit settings/actions.
+  - Archived habits are hidden from Today checklist and active list, but preserved in heatmap, insights history, and can be unarchived anytime from an "Archived" drawer.
 
-Leftovers from phase 2:
-- Sparkline inside Insights tiles (needs per-tile series from `lib/insights.ts`).
-- Achievement "newly unlocked" flip on the You page (needs unlock timestamps compared to last visit).
-- Trend chart line-draw is Recharts default; a custom stroke-dash draw would look richer.
+### 1.4 Curated Template Library
+- **Implementation**:
+  - Create `src/lib/templates.ts` with 25+ curated habits categorized by routine:
+    - *Morning*: Hydrate (💧), Make bed (🛏️), Sunlight (🌅), Meditation (🧘)
+    - *Health & Fitness*: 10k Steps (🚶), Gym workout (💪), Stretch (🤸), Cook whole meal (🥗)
+    - *Mind & Focus*: Deep work 90m (⚡), Read 20 pages (📚), Journal (✍️), Screen detox (📵)
+    - *Evening*: Floss (🦷), Review day (📝), Sleep by 11pm (😴)
+  - "Start from template" button & horizontal carousel in `HabitSheet.tsx` that pre-populates name, emoji, category, frequency, and recommended color in one tap.
 
-## Phase 3 — Categories + Templates 🔜
-- `Habit.category` already exists in Prisma. Picker in HabitSheet (Health, Study, Work, Mind, Personal, Custom) with icon+colour; filter chips on Today/Habits (`layoutId` sliding active chip); Insights category breakdown.
-- `src/lib/templates.ts`: 25–30 ready habits (emoji, colour, category, goal, type). "Start from template" grid at top of the new-habit sheet, pre-fills the form.
+---
 
-## Phase 4 — Numeric + Negative habits ⬜ (one migration)
-- Prisma: `Habit.type` (`boolean|numeric|negative`, default boolean), `Habit.target Float?`, `Habit.unit String?`, `Check.value Float?`.
-- Numeric: tap = +1 step (or long-press slider); auto-complete at target; ring segment partial fill; card shows `1.2 / 2 L`.
-- Negative: day is "clean" by default; "Slipped" button logs a check-as-slip; streak = days clean; card shows "Day 12 clean"; slip resets with a calm (not red) animation.
-- Update `lib/streak.ts`, `lib/insights.ts`, WeekGrid, calendar, XP.
+## Phase 2 — Advanced Habit Engine: Numeric, Negative & Specific Schedules ⬜
 
-## Phase 5 — Streak freeze ⬜
-- Replace `Habit.streakShield Boolean` with `freezeTokens Int` + `FreezeLog(habitId, date)`.
-- Earn 1 token per 7-day streak (max 2); auto-apply on a missed day; ice badge on card and calendar; streak calc treats frozen days as kept.
+### 2.1 Specific Day-of-Week Scheduling
+- **Problem**: A 3x/week gym habit (Mon/Wed/Fri) currently shows up on Tuesday as due, causing false guilt.
+- **Implementation**:
+  - Add `scheduledDays String?` (JSON array or bitmask, e.g. `["mon","wed","fri"]`) to `Habit`.
+  - Today checklist dynamically groups habits:
+    - **Due Today**: Scheduled for today or flexible daily.
+    - **Rest Day**: Not scheduled for today (can still check off if desired, but doesn't penalize perfect day).
 
-## Phase 6 — Mood / journal ⬜
-- `MoodEntry(date unique, mood 1–5, note)`. "How was today?" 5-emoji row under the Today list.
-- Insights: mood vs completion chart, per-habit correlation ("Gym days: mood +0.8").
+### 2.2 Numeric & Measurable Habits
+- **Schema Migration**:
+  - `Habit.type String @default("boolean")` (`"boolean"` | `"numeric"` | `"negative"`).
+  - `Habit.target Float?` (e.g. `2000`, `30`, `10000`).
+  - `Habit.unit String?` (e.g. `ml`, `pages`, `steps`, `mins`).
+  - `Habit.step Float?` (e.g. `250`, `5`, `1000`).
+  - `Check.value Float?` (current logged progress).
+- **UI / Interaction**:
+  - HabitCard stepper: quick `+` button increments by `step` (or long press for custom number input).
+  - HabitCard shows progress bar & text: `1,500 / 2,000 ml`.
+  - Segmented ring supports fractional segment fill (e.g., 75% filled segment).
+  - Auto-marks completed when `value >= target`.
 
-## Phase 7 — Monthly / yearly review ⬜
-- `/review/[period]` (2026-09 or 2026): completion %, best/worst habit, longest streak, mood avg, XP, category breakdown.
-- Story-style swipeable slides; "Your September review is ready" card on Today on the 1st; share image (html-to-image + Web Share API).
+### 2.3 Negative / Break-a-Habit Tracking
+- **Concept**: For bad habits ("No Smoking", "No Alcohol", "No Sugar", "No Late-night Gaming").
+- **Mechanics**:
+  - Days are **clean by default** (automatic success unless a slip is logged).
+  - Card displays "14 days clean" with calm milestone badges.
+  - Action button: "Log Slip-up" (logs check as slip with calm, non-punitive animation and optional reflection note).
+  - Streak represents consecutive clean days.
 
-## Phase 8 — Reminders + quick actions ⬜
-- Web Push: VAPID keys, `PushSubscription` model, `sw.js` push + notificationclick handlers, "Mark done" action button that POSTs `/api/checks`.
-- `/api/cron/reminders` (Vercel Cron every minute) matching `Habit.reminderTime`.
-- Optional email digest via Resend; email field in Settings.
-- "Widget" feel: per-habit manifest shortcuts, `/quick` one-tap page. Note: real home-screen widgets are not possible on the web; iOS push needs the PWA installed.
+### 2.4 Built-in Timers (Duration Habits)
+- Quick countdown / stopwatch overlay for time-based habits (e.g. 15-minute meditation or 25-minute study).
+- Automatically marks habit as complete upon timer finish with gentle chime.
 
-## Phase 9 — Social ⬜
-- Step 1 (no accounts): streak / review share card PNG + Web Share.
-- Step 2 (needs auth + hosted Postgres): accountability partner invite link, partner daily progress, nudges. Separate decision.
+---
 
-## How to resume
-1. `git status` on `dev-branch`, run `npm run dev`, click through all four tabs, open a habit, switch theme on You.
-2. Commit phases 1+2 (`feat(ui): motion system, view transitions and animated pages`).
-3. Start Phase 3 (categories + templates). No schema change needed; begin in `HabitSheet.tsx` and `lib/templates.ts`.
+## Phase 3 — Streak Protection & Freeze System ⬜
+
+### 3.1 Streak Freeze Tokens
+- **Problem**: Life events (illness, flights, emergencies) wipe out hard-earned 60+ day streaks and demotivate users.
+- **Implementation**:
+  - Add `freezeTokens Int @default(1)` to `Settings`.
+  - Add `FreezeLog(id, habitId, date)` table.
+  - Earn 1 freeze token every 7 consecutive days of tracking (capped at 2 or 3).
+  - **Auto-freeze**: If a user misses a day, consume 1 token to freeze the streak instead of resetting to 0.
+  - Ice badge (`❄️ Frozen`) displayed on HabitCard and Month Calendar.
+  - Update `lib/streak.ts` to treat frozen dates as continuous streak links.
+
+---
+
+## Phase 4 — Functional Reminders & Notifications ⬜
+
+### 4.1 Web Notification & Push Integration
+- **Problem**: `Habit.reminderTime` is saved in the database but never triggers any notifications.
+- **Implementation**:
+  - Request browser Notification permissions (`Notification.requestPermission()`).
+  - Web Push service worker integration in [public/sw.js](file:///c:/my-github/habit%20tracker/public/sw.js) for push events and notification clicks.
+  - Direct action buttons on push notifications: `[Mark Done]` button that immediately registers the check-in without full page navigation.
+  - Local scheduled notifications (when app is open/installed PWA) and Vercel Cron `/api/cron/reminders` for push dispatch.
+
+---
+
+## Phase 5 — Daily Mood, Journaling & Habit Correlation ⬜
+
+### 5.1 Daily Mood Check-in
+- **Schema**: `MoodEntry(id, date String @unique, score Int, note String?, createdAt DateTime)`.
+- **Today Page**: Subtle "How was your day?" 5-emoji row (😭 🙁 😐 🙂 🤩) under the checklist.
+- Instant feedback and XP reward for daily reflection.
+
+### 5.2 Insights: Mood vs. Habit Correlation Engine
+- Calculate impact of individual habits on daily mood:
+  - *"On days you complete 'Workout', your mood is +0.8 points higher."*
+  - Scatter / correlation chart showing completion percentage vs. reported mood.
+  - Consolidated daily journal view showing notes across all habits + mood on any past day.
+
+---
+
+## Phase 6 — Review Stories, Milestones & Social Sharing ⬜
+
+### 6.1 Monthly & Yearly Wrap-ups (`/review/[period]`)
+- Story-style swipeable summary (Spotify Wrapped style):
+  - Total check-ins, top 3 habits, longest streak, XP gained, most consistent weekday.
+  - "Your September review is ready" banner on the 1st of each month.
+
+### 6.2 Milestone Share Cards
+- High-res image generation via `html-to-image` or canvas for 7/30/100-day streaks and perfect weeks.
+- Native `navigator.share()` API integration for Instagram stories, WhatsApp, or Twitter.
+
+---
+
+## Phase 7 — Offline Queue & Cloud Persistence ⬜
+
+### 7.1 Offline First Sync Queue
+- IndexedDB / localStorage queue for check-ins made while offline.
+- Background sync via service worker when network reconnects, preventing "Couldn't save change" errors.
+
+### 7.2 Cloud Database Adapter (Production Ready)
+- Support Turso (libSQL) / Supabase / Postgres so data persists reliably on Vercel/serverless deployments without local SQLite ephemeral wipe.
+- Optional multi-device user accounts (NextAuth / Supabase Auth) for cross-device sync.
+
+---
+
+## Immediate Next Step:
+👉 **Start Phase 1**:
+1. Add JSON Backup Import in [src/app/you/page.tsx](file:///c:/my-github/habit%20tracker/src/app/you/page.tsx).
+2. Wire up category picker in [HabitSheet.tsx](file:///c:/my-github/habit%20tracker/src/components/habits/HabitSheet.tsx) + Category filter chips on Today & Habits pages.
+3. Add `isArchived` soft delete to Prisma schema.
+
